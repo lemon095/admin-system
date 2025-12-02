@@ -4,6 +4,9 @@
 .env.*
 !.env.example
 
+# Server info (contains sensitive information)
+server-info.md
+
 # IDE
 .idea/
 .vscode/
