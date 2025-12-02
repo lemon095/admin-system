@@ -28,36 +28,82 @@ fi
 
 chmod 600 "${SSH_KEY}"
 
-# 使用rsync同步文件（更快，只传输变更）
-echo "🔄 使用rsync同步文件..."
+# 检查rsync是否可用，如果不可用则使用tar+scp
+if command -v rsync &> /dev/null; then
+    echo "🔄 使用rsync同步文件..."
+    USE_RSYNC=true
+else
+    echo "⚠️  rsync未安装，使用tar+scp方式..."
+    USE_RSYNC=false
+fi
+
+# 创建临时目录
+TEMP_DIR=$(mktemp -d)
 
 if [ "$UPDATE_TYPE" == "backend" ] || [ "$UPDATE_TYPE" == "all" ]; then
     echo ""
     echo "同步后端代码..."
-    rsync -avz --delete \
-        -e "ssh -i ${SSH_KEY} -o StrictHostKeyChecking=no" \
-        --exclude='.env' \
-        --exclude='main' \
-        --exclude='*.log' \
-        --exclude='.git' \
-        --exclude='go.sum' \
-        backend/ ${SERVER_USER}@${SERVER_IP}:${DEPLOY_PATH}/backend/
+    
+    if [ "$USE_RSYNC" = true ]; then
+        rsync -avz --delete \
+            -e "ssh -i ${SSH_KEY} -o StrictHostKeyChecking=no" \
+            --exclude='.env' \
+            --exclude='main' \
+            --exclude='*.log' \
+            --exclude='.git' \
+            --exclude='go.sum' \
+            backend/ ${SERVER_USER}@${SERVER_IP}:${DEPLOY_PATH}/backend/
+    else
+        # 使用tar+scp
+        cd backend
+        tar -czf "${TEMP_DIR}/backend-sync.tar.gz" \
+            --exclude='.env' \
+            --exclude='main' \
+            --exclude='*.log' \
+            --exclude='.git' \
+            --exclude='go.sum' \
+            .
+        cd ..
+        scp -i "${SSH_KEY}" -o StrictHostKeyChecking=no "${TEMP_DIR}/backend-sync.tar.gz" ${SERVER_USER}@${SERVER_IP}:/tmp/
+        ssh -i "${SSH_KEY}" -o StrictHostKeyChecking=no ${SERVER_USER}@${SERVER_IP} "cd ${DEPLOY_PATH}/backend && tar -xzf /tmp/backend-sync.tar.gz && rm -f /tmp/backend-sync.tar.gz"
+        rm -f "${TEMP_DIR}/backend-sync.tar.gz"
+    fi
     echo "✅ 后端代码同步完成"
 fi
 
 if [ "$UPDATE_TYPE" == "frontend" ] || [ "$UPDATE_TYPE" == "all" ]; then
     echo ""
     echo "同步前端代码..."
-    rsync -avz --delete \
-        -e "ssh -i ${SSH_KEY} -o StrictHostKeyChecking=no" \
-        --exclude='node_modules' \
-        --exclude='dist' \
-        --exclude='.env' \
-        --exclude='*.log' \
-        --exclude='.git' \
-        frontend/ ${SERVER_USER}@${SERVER_IP}:${DEPLOY_PATH}/frontend/
+    
+    if [ "$USE_RSYNC" = true ]; then
+        rsync -avz --delete \
+            -e "ssh -i ${SSH_KEY} -o StrictHostKeyChecking=no" \
+            --exclude='node_modules' \
+            --exclude='dist' \
+            --exclude='.env' \
+            --exclude='*.log' \
+            --exclude='.git' \
+            frontend/ ${SERVER_USER}@${SERVER_IP}:${DEPLOY_PATH}/frontend/
+    else
+        # 使用tar+scp
+        cd frontend
+        tar -czf "${TEMP_DIR}/frontend-sync.tar.gz" \
+            --exclude='node_modules' \
+            --exclude='dist' \
+            --exclude='.env' \
+            --exclude='*.log' \
+            --exclude='.git' \
+            .
+        cd ..
+        scp -i "${SSH_KEY}" -o StrictHostKeyChecking=no "${TEMP_DIR}/frontend-sync.tar.gz" ${SERVER_USER}@${SERVER_IP}:/tmp/
+        ssh -i "${SSH_KEY}" -o StrictHostKeyChecking=no ${SERVER_USER}@${SERVER_IP} "cd ${DEPLOY_PATH}/frontend && tar -xzf /tmp/frontend-sync.tar.gz && rm -f /tmp/frontend-sync.tar.gz"
+        rm -f "${TEMP_DIR}/frontend-sync.tar.gz"
+    fi
     echo "✅ 前端代码同步完成"
 fi
+
+# 清理临时目录
+rm -rf "${TEMP_DIR}"
 
 echo ""
 echo "=========================================="
