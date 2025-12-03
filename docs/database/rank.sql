@@ -1,0 +1,10 @@
+CREATE TABLE `rank_snapshot` (
+    `id` BIGINT UNSIGNED NOT NULL AUTO_INCREMENT,
+    `type` TINYINT NOT NULL COMMENT '1boss 2物资 3邀请',
+    `user_id` BIGINT UNSIGNED NOT NULL,
+    `value` BIGINT NOT NULL COMMENT '排行值',
+    `rank` INT NOT NULL COMMENT '名次',
+    `create_time` DATETIME DEFAULT CURRENT_TIMESTAMP,
+
+    PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='排行榜快照记录';

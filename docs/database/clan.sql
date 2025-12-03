@@ -1,0 +1,20 @@
+CREATE TABLE `clan` (
+    `id` BIGINT UNSIGNED NOT NULL AUTO_INCREMENT,
+    `name` VARCHAR(50) NOT NULL COMMENT '战队名',
+    `slogan` VARCHAR(255) DEFAULT NULL COMMENT '口号',
+    `leader_id` BIGINT UNSIGNED NOT NULL COMMENT '队长ID',
+    `join_type` TINYINT NOT NULL COMMENT '1自由加入 2审核加入',
+    `create_time` DATETIME DEFAULT CURRENT_TIMESTAMP,
+
+    PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='战队信息';
+
+
+CREATE TABLE `clan_member` (
+    `clan_id` BIGINT UNSIGNED NOT NULL,
+    `user_id` BIGINT UNSIGNED NOT NULL,
+    `role` TINYINT NOT NULL COMMENT '1队长 2成员',
+    `join_time` DATETIME DEFAULT CURRENT_TIMESTAMP,
+
+    PRIMARY KEY (`clan_id`, `user_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='战队成员';
