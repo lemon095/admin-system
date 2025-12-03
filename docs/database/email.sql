@@ -1,0 +1,22 @@
+CREATE TABLE `mail` (
+    `id` BIGINT UNSIGNED NOT NULL AUTO_INCREMENT,
+    `user_id` BIGINT UNSIGNED COMMENT '收件人',
+    `title` VARCHAR(100),
+    `content` TEXT,
+    `attachments` JSON COMMENT '附件（道具/货币）',
+    `status` TINYINT DEFAULT 0 COMMENT '0未读 1已读',
+    `create_time` DATETIME DEFAULT CURRENT_TIMESTAMP,
+    `expire_time` DATETIME DEFAULT NULL,
+
+    PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='邮件消息';
+
+
+CREATE TABLE `mail_claim_log` (
+    `id` BIGINT UNSIGNED NOT NULL AUTO_INCREMENT,
+    `mail_id` BIGINT UNSIGNED NOT NULL,
+    `user_id` BIGINT UNSIGNED NOT NULL,
+    `claim_time` DATETIME DEFAULT CURRENT_TIMESTAMP,
+
+    PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='邮件附件领取记录';

@@ -22,7 +22,34 @@ CREATE TABLE IF NOT EXISTS `users` (
 -- 用户名: chuchangkeji
 -- 密码: chuchangkeji666 (MD5: 需要计算)
 -- 注意：实际插入时需要使用MD5值
-INSERT INTO `users` (`username`, `avatar_id`, `role`, `password`, `status`, `created_by`) 
+INSERT INTO `users` (`username`, `avatar_id`, `role`, `password`, `status`, `created_by`)
 VALUES ('chuchangkeji', 'default-avatar-001', 1, MD5('chuchangkeji666'), 1, 1)
 ON DUPLICATE KEY UPDATE `username`=`username`;
+
+CREATE TABLE `admin_role` (
+    `id` INT NOT NULL AUTO_INCREMENT COMMENT '角色ID',
+    `name` VARCHAR(50) NOT NULL COMMENT '角色名称：超管/运营/客服',
+    PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='后台管理员角色表';
+
+CREATE TABLE `admin_user` (
+    `id` INT NOT NULL AUTO_INCREMENT COMMENT '管理员ID',
+    `username` VARCHAR(50) NOT NULL UNIQUE COMMENT '登录用户名',
+    `password` VARCHAR(255) NOT NULL COMMENT '加密后的密码',
+    `role_id` INT NOT NULL COMMENT '角色ID（外键）',
+    `create_time` DATETIME DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
+    
+    PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='后台管理员账户表';
+
+CREATE TABLE `invite_relation` (
+    `user_id` BIGINT UNSIGNED NOT NULL COMMENT '用户ID（下级）',
+    `parent_id` BIGINT UNSIGNED DEFAULT NULL COMMENT '一级邀请人（上级）',
+    `grand_id` BIGINT UNSIGNED DEFAULT NULL COMMENT '二级邀请人（上上级）',
+    `bind_time` DATETIME DEFAULT CURRENT_TIMESTAMP COMMENT '绑定时间',
+    
+    PRIMARY KEY (`user_id`),
+    KEY `idx_parent` (`parent_id`),
+    KEY `idx_grand` (`grand_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='用户邀请绑定关系表';
 
