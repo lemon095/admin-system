@@ -8,9 +8,12 @@ import (
 	"admin-system/config"
 
 	_ "github.com/go-sql-driver/mysql"
+	"gorm.io/driver/mysql"
+	"gorm.io/gorm"
 )
 
 var DB *sql.DB
+var GormDB *gorm.DB
 
 // InitMySQL 初始化MySQL连接
 func InitMySQL() error {
@@ -38,6 +41,14 @@ func InitMySQL() error {
 	DB.SetMaxIdleConns(10)
 
 	log.Println("MySQL连接成功")
+
+	GormDB, err = gorm.Open(mysql.New(mysql.Config{
+		Conn: DB,
+	}), &gorm.Config{})
+
+	if err != nil {
+		panic(err)
+	}
 	return nil
 }
 
@@ -48,4 +59,3 @@ func CloseMySQL() {
 		log.Println("MySQL连接已关闭")
 	}
 }
-

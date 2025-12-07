@@ -1,6 +1,7 @@
 package main
 
 import (
+	"admin-system/model"
 	"log"
 	"os"
 	"os/signal"
@@ -30,7 +31,7 @@ func main() {
 	defer database.CloseRedis()
 
 	// 初始化数据表
-	if err := database.InitTables(); err != nil {
+	if err := model.InitTables(); err != nil {
 		log.Fatalf("数据表初始化失败: %v", err)
 	}
 
@@ -60,4 +61,3 @@ func main() {
 
 	log.Println("服务器正在关闭...")
 }
-

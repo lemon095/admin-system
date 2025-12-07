@@ -29,7 +29,7 @@ type AuthService struct{}
 // Login 用户登录
 func (s *AuthService) Login(req *LoginRequest, clientIP string) (*LoginResponse, error) {
 	// 查询用户
-	user, err := database.GetUserByUsername(req.Username)
+	user, err := model.GetUserByUsername(req.Username)
 	if err != nil {
 		return nil, fmt.Errorf("用户名或密码错误")
 	}
@@ -46,7 +46,7 @@ func (s *AuthService) Login(req *LoginRequest, clientIP string) (*LoginResponse,
 	}
 
 	// 更新登录信息
-	if err := database.UpdateUserLoginInfo(user.ID, clientIP); err != nil {
+	if err := model.UpdateUserLoginInfo(user.ID, clientIP); err != nil {
 		// 登录信息更新失败不影响登录流程
 		fmt.Printf("更新登录信息失败: %v\n", err)
 	}

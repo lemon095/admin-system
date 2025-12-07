@@ -1,8 +1,0 @@
-CREATE TABLE `config` (
-    `id` INT NOT NULL AUTO_INCREMENT,
-    `key_name` VARCHAR(100) UNIQUE COMMENT '配置项key',
-    `value_json` JSON COMMENT '配置JSON内容',
-    `update_time` DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-
-    PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='系统通用配置中心';

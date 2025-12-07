@@ -16,6 +16,7 @@ func SetupRouter() *gin.Engine {
 
 	// 创建控制器
 	authController := controller.NewAuthController()
+	systemController := controller.NewSystemController()
 
 	// 公开路由
 	api := r.Group("/api")
@@ -35,8 +36,14 @@ func SetupRouter() *gin.Engine {
 			auth.POST("/refresh", authController.RefreshToken)
 			auth.GET("/userinfo", authController.GetUserInfo)
 		}
+
+		//system := apiAuth.Group("/system")
+		system := r.Group("/api/system")
+		{
+			system.GET("/:category", systemController.SystemList)
+			system.POST("/:category", systemController.SystemCreate)
+		}
 	}
 
 	return r
 }
-
