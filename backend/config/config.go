@@ -1,61 +1,40 @@
 package config
 
-import (
-	"log"
-	"os"
-	"strconv"
+type Server struct {
+	JWT       JWT     `mapstructure:"jwt" json:"jwt" yaml:"jwt"`
+	Zap       Zap     `mapstructure:"zap" json:"zap" yaml:"zap"`
+	Redis     Redis   `mapstructure:"redis" json:"redis" yaml:"redis"`
+	RedisList []Redis `mapstructure:"redis-list" json:"redis-list" yaml:"redis-list"`
+	Mongo     Mongo   `mapstructure:"mongo" json:"mongo" yaml:"mongo"`
+	Email     Email   `mapstructure:"email" json:"email" yaml:"email"`
+	System    System  `mapstructure:"system" json:"system" yaml:"system"`
+	Captcha   Captcha `mapstructure:"captcha" json:"captcha" yaml:"captcha"`
+	// auto
+	AutoCode Autocode `mapstructure:"autocode" json:"autocode" yaml:"autocode"`
+	// gorm
+	Mysql  Mysql           `mapstructure:"mysql" json:"mysql" yaml:"mysql"`
+	Mssql  Mssql           `mapstructure:"mssql" json:"mssql" yaml:"mssql"`
+	Pgsql  Pgsql           `mapstructure:"pgsql" json:"pgsql" yaml:"pgsql"`
+	Oracle Oracle          `mapstructure:"oracle" json:"oracle" yaml:"oracle"`
+	Sqlite Sqlite          `mapstructure:"sqlite" json:"sqlite" yaml:"sqlite"`
+	DBList []SpecializedDB `mapstructure:"db-list" json:"db-list" yaml:"db-list"`
+	// oss
+	Local        Local        `mapstructure:"local" json:"local" yaml:"local"`
+	Qiniu        Qiniu        `mapstructure:"qiniu" json:"qiniu" yaml:"qiniu"`
+	AliyunOSS    AliyunOSS    `mapstructure:"aliyun-oss" json:"aliyun-oss" yaml:"aliyun-oss"`
+	HuaWeiObs    HuaWeiObs    `mapstructure:"hua-wei-obs" json:"hua-wei-obs" yaml:"hua-wei-obs"`
+	TencentCOS   TencentCOS   `mapstructure:"tencent-cos" json:"tencent-cos" yaml:"tencent-cos"`
+	AwsS3        AwsS3        `mapstructure:"aws-s3" json:"aws-s3" yaml:"aws-s3"`
+	CloudflareR2 CloudflareR2 `mapstructure:"cloudflare-r2" json:"cloudflare-r2" yaml:"cloudflare-r2"`
+	Minio        Minio        `mapstructure:"minio" json:"minio" yaml:"minio"`
 
-	"github.com/joho/godotenv"
-)
+	Excel Excel `mapstructure:"excel" json:"excel" yaml:"excel"`
 
-var (
-	DBHost              string
-	DBPort              string
-	DBUser              string
-	DBPassword          string
-	DBName              string
-	DBCharset           string
-	RedisHost           string
-	RedisPort           string
-	RedisPassword       string
-	RedisDB             int
-	JWTSecret           string
-	JWTExpireHours      int
-	JWTRefreshThresholdHours int
-	ServerPort          string
-	ServerMode          string
-)
+	DiskList []DiskList `mapstructure:"disk-list" json:"disk-list" yaml:"disk-list"`
 
-func Init() {
-	// 加载.env文件
-	if err := godotenv.Load(); err != nil {
-		log.Println("未找到.env文件，使用环境变量")
-	}
+	// 跨域配置
+	Cors CORS `mapstructure:"cors" json:"cors" yaml:"cors"`
 
-	DBHost = getEnv("DB_HOST", "mysql")
-	DBPort = getEnv("DB_PORT", "3306")
-	DBUser = getEnv("DB_USER", "root")
-	DBPassword = getEnv("DB_PASSWORD", "root123456")
-	DBName = getEnv("DB_NAME", "admin_system")
-	DBCharset = getEnv("DB_CHARSET", "utf8mb4")
-
-	RedisHost = getEnv("REDIS_HOST", "redis")
-	RedisPort = getEnv("REDIS_PORT", "6379")
-	RedisPassword = getEnv("REDIS_PASSWORD", "")
-	RedisDB, _ = strconv.Atoi(getEnv("REDIS_DB", "0"))
-
-	JWTSecret = getEnv("JWT_SECRET", "your-secret-key-change-in-production")
-	JWTExpireHours, _ = strconv.Atoi(getEnv("JWT_EXPIRE_HOURS", "72"))
-	JWTRefreshThresholdHours, _ = strconv.Atoi(getEnv("JWT_REFRESH_THRESHOLD_HOURS", "24"))
-
-	ServerPort = getEnv("SERVER_PORT", "7701")
-	ServerMode = getEnv("SERVER_MODE", "release")
+	// MCP配置
+	MCP MCP `mapstructure:"mcp" json:"mcp" yaml:"mcp"`
 }
-
-func getEnv(key, defaultValue string) string {
-	if value := os.Getenv(key); value != "" {
-		return value
-	}
-	return defaultValue
-}
-

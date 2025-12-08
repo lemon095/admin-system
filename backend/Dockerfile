@@ -1,34 +1,31 @@
-FROM golang:1.21-alpine AS builder
+FROM golang:alpine as builder
 
-WORKDIR /app
-
-# 安装必要的工具
-RUN apk add --no-cache git
-
-# 复制go mod文件
-COPY go.mod go.sum ./
-RUN go mod download
-
-# 复制源代码
+WORKDIR /go/src/github.com/flipped-aurora/gin-vue-admin/server
 COPY . .
 
-# 构建应用
-RUN CGO_ENABLED=0 GOOS=linux go build -a -installsuffix cgo -o main .
+RUN go env -w GO111MODULE=on \
+    && go env -w GOPROXY=https://goproxy.cn,direct \
+    && go env -w CGO_ENABLED=0 \
+    && go env \
+    && go mod tidy \
+    && go build -o server .
 
-# 运行阶段
 FROM alpine:latest
 
-WORKDIR /root/
+LABEL MAINTAINER="SliverHorn@sliver_horn@qq.com"
+# 设置时区
+ENV TZ=Asia/Shanghai
+RUN apk update && apk add --no-cache tzdata openntpd \
+    && ln -sf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
 
-# 安装ca证书
-RUN apk --no-cache add ca-certificates
+WORKDIR /go/src/github.com/flipped-aurora/gin-vue-admin/server
 
-# 从构建阶段复制二进制文件
-COPY --from=builder /app/main .
+COPY --from=0 /go/src/github.com/flipped-aurora/gin-vue-admin/server/server ./
+COPY --from=0 /go/src/github.com/flipped-aurora/gin-vue-admin/server/resource ./resource/
+COPY --from=0 /go/src/github.com/flipped-aurora/gin-vue-admin/server/config.docker.yaml ./
 
-# 暴露端口
-EXPOSE 7701
+# 挂载目录：如果使用了sqlite数据库，容器命令示例：docker run -d -v /宿主机路径/gva.db:/go/src/github.com/flipped-aurora/gin-vue-admin/server/gva.db -p 8888:8888 --name gva-server-v1 gva-server:1.0
+# VOLUME ["/go/src/github.com/flipped-aurora/gin-vue-admin/server"]
 
-# 运行应用
-CMD ["./main"]
-
+EXPOSE 8888
+ENTRYPOINT ./server -c config.docker.yaml
