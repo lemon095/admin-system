@@ -42,7 +42,7 @@ func Viper() *viper.Viper {
 	global.GVA_CONFIG.Zap.Format = getEnv("ZAP_FORMAT", "console")
 	global.GVA_CONFIG.Zap.Director = getEnv("ZAP_DIRECTOR", "log")
 
-	global.GVA_CONFIG.System.Addr = getEnv("SERVER_PORT", "8888")
+	global.GVA_CONFIG.System.Addr = getEnv("SERVER_PORT", "7701")
 	//ServerMode = getEnv("SERVER_MODE", "release")
 
 	global.GVA_CONFIG.Local.StorePath = getEnv("LOCAL_STORE_PATH", "uploads/file")
