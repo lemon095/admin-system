@@ -16,8 +16,12 @@ if ! docker info > /dev/null 2>&1; then
 fi
 
 # 检查docker-compose是否安装
-if ! command -v docker-compose &> /dev/null; then
-    echo "❌ 错误: docker-compose未安装"
+if command -v docker-compose &> /dev/null; then
+    COMPOSE_CMD="docker-compose"
+elif docker compose version &> /dev/null; then
+    COMPOSE_CMD="docker compose"
+else
+    echo "❌ 错误: docker-compose（或 docker compose） 未安装"
     exit 1
 fi
 
@@ -32,6 +36,9 @@ if ! command -v go &> /dev/null; then
     cd ..
 else
     echo "正在下载依赖..."
+    go env -w GOPROXY=https://goproxy.cn,direct
+    go env -w GOSUMDB=sum.golang.google.cn
+
     go mod download
     
     echo "正在编译..."
@@ -47,12 +54,12 @@ fi
 # 2. 停止旧服务
 echo ""
 echo "🛑 步骤 2/4: 停止旧服务..."
-docker-compose down
+$COMPOSE_CMD down
 
 # 3. 构建并启动服务
 echo ""
 echo "🚀 步骤 3/4: 构建Docker镜像并启动服务..."
-docker-compose up -d --build
+$COMPOSE_CMD up -d --build
 
 # 4. 等待服务启动
 echo ""
@@ -62,7 +69,7 @@ sleep 8
 # 检查服务状态
 echo ""
 echo "📊 服务状态:"
-docker-compose ps
+$COMPOSE_CMD ps
 
 # 检查后端服务健康状态
 echo ""
