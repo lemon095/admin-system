@@ -11,7 +11,7 @@ services:
     container_name: admin-system-backend
     restart: always
     ports:
-      - "7701:7701"
+      - "9020:9020"
     env_file:
       - .env
     environment:
@@ -30,7 +30,7 @@ services:
       JWT_SECRET: ${JWT_SECRET:-your-secret-key-change-in-production}
       JWT_EXPIRE_HOURS: ${JWT_EXPIRE_HOURS:-72}
       JWT_REFRESH_THRESHOLD_HOURS: ${JWT_REFRESH_THRESHOLD_HOURS:-24}
-      SERVER_PORT: ${SERVER_PORT:-7701}
+      SERVER_PORT: ${SERVER_PORT:-9020}
       SERVER_MODE: ${SERVER_MODE:-release}
     # 连接到宿主机的MySQL和Redis
     # 方案1: 使用host.docker.internal (Docker 20.10+)

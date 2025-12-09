@@ -13,13 +13,23 @@ if ! docker info > /dev/null 2>&1; then
     exit 1
 fi
 
+# 检查docker-compose是否安装，兼容新旧版本
+if command -v docker-compose &> /dev/null; then
+    COMPOSE_CMD="docker-compose"
+elif docker compose version &> /dev/null 2>&1; then
+    COMPOSE_CMD="docker compose"
+else
+    echo "❌ 错误: docker-compose（或 docker compose）未安装"
+    exit 1
+fi
+
 echo "🛑 正在停止服务..."
-docker-compose down
+$COMPOSE_CMD down
 
 echo ""
 echo "=========================================="
 echo "✅ 服务已停止"
 echo "=========================================="
-echo "启动服务: ./start.sh 或 docker-compose up -d"
+echo "启动服务: ./start.sh 或 $COMPOSE_CMD up -d"
 echo "=========================================="
 

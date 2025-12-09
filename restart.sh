@@ -13,11 +13,21 @@ if ! docker info > /dev/null 2>&1; then
     exit 1
 fi
 
+# 检查docker-compose是否安装，兼容新旧版本
+if command -v docker-compose &> /dev/null; then
+    COMPOSE_CMD="docker-compose"
+elif docker compose version &> /dev/null 2>&1; then
+    COMPOSE_CMD="docker compose"
+else
+    echo "❌ 错误: docker-compose（或 docker compose）未安装"
+    exit 1
+fi
+
 echo "🛑 停止服务..."
-docker-compose stop
+$COMPOSE_CMD stop
 
 echo "🚀 启动服务..."
-docker-compose start
+$COMPOSE_CMD start
 
 # 等待服务启动
 echo "⏳ 等待服务启动..."
@@ -25,12 +35,12 @@ sleep 5
 
 echo ""
 echo "📊 服务状态:"
-docker-compose ps
+$COMPOSE_CMD ps
 
 echo ""
 echo "=========================================="
 echo "✅ 重启完成！"
 echo "=========================================="
-echo "查看日志: docker-compose logs -f backend"
+echo "查看日志: $COMPOSE_CMD logs -f backend"
 echo "=========================================="
 
