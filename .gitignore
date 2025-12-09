@@ -1,7 +1,7 @@
 # Environment
 .env
 .env.local
-.env.*
+/backend/.env.*
 !.env.example
 
 # Server info (contains sensitive information)
