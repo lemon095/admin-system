@@ -2,11 +2,12 @@ package core
 
 import (
 	"fmt"
+	"time"
+
 	"github.com/flipped-aurora/gin-vue-admin/server/global"
 	"github.com/flipped-aurora/gin-vue-admin/server/initialize"
 	"github.com/flipped-aurora/gin-vue-admin/server/service/system"
 	"go.uber.org/zap"
-	"time"
 )
 
 func RunServer() {
@@ -31,7 +32,7 @@ func RunServer() {
 
 	Router := initialize.Routers()
 
-	address := fmt.Sprintf(":%d", global.GVA_CONFIG.System.Addr)
+	address := fmt.Sprintf(":%s", global.GVA_CONFIG.System.Addr)
 
 	fmt.Printf(`
 	欢迎使用 gin-vue-admin
