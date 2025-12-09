@@ -22,11 +22,11 @@ func Viper() *viper.Viper {
 	v.SetConfigFile("env")
 	v.AutomaticEnv()
 
-	//global.GVA_CONFIG.Mysql.Port = getEnv("DB_HOST", "mysql")
-	global.GVA_CONFIG.Mysql.Port = getEnv("DB_PORT", "3306")
-	global.GVA_CONFIG.Mysql.Username = getEnv("DB_USER", "root")
-	global.GVA_CONFIG.Mysql.Password = getEnv("DB_PASSWORD", "root123456")
-	global.GVA_CONFIG.Mysql.Dbname = getEnv("DB_NAME", "admin_system")
+	global.GVA_CONFIG.Mysql.Path = getEnv("DB_HOST", "rm-2ze72h0maxcrf682uno.mysql.rds.aliyuncs.com")
+	global.GVA_CONFIG.Mysql.Port = getEnv("DB_PORT", "33301")
+	global.GVA_CONFIG.Mysql.Username = getEnv("DB_USER", "game_user")
+	global.GVA_CONFIG.Mysql.Password = getEnv("DB_PASSWORD", "*Chuchangkeji")
+	global.GVA_CONFIG.Mysql.Dbname = getEnv("DB_NAME", "bunker")
 	global.GVA_CONFIG.Mysql.Config = getEnv("DB_CONFIG", "charset=utf8mb4&parseTime=True&loc=Local")
 	//DBCharset = getEnv("DB_CHARSET", "utf8mb4")
 
