@@ -1,6 +1,7 @@
 package core
 
 import (
+	"fmt"
 	"log"
 	"os"
 	"path/filepath"
@@ -21,7 +22,7 @@ func Viper() *viper.Viper {
 	v.SetConfigFile("env")
 	v.AutomaticEnv()
 
-	global.GVA_CONFIG.Mysql.Port = getEnv("DB_HOST", "mysql")
+	//global.GVA_CONFIG.Mysql.Port = getEnv("DB_HOST", "mysql")
 	global.GVA_CONFIG.Mysql.Port = getEnv("DB_PORT", "3306")
 	global.GVA_CONFIG.Mysql.Username = getEnv("DB_USER", "root")
 	global.GVA_CONFIG.Mysql.Password = getEnv("DB_PASSWORD", "root123456")
@@ -29,8 +30,7 @@ func Viper() *viper.Viper {
 	global.GVA_CONFIG.Mysql.Config = getEnv("DB_CONFIG", "charset=utf8mb4&parseTime=True&loc=Local")
 	//DBCharset = getEnv("DB_CHARSET", "utf8mb4")
 
-	global.GVA_CONFIG.Redis.Addr = getEnv("REDIS_HOST", "redis")
-	//global.GVA_CONFIG.REDIS_HOSTis = getEnv("REDIS_PORT", "6379")
+	global.GVA_CONFIG.Redis.Addr = fmt.Sprintf("%s:%s", getEnv("REDIS_HOST", "172.28.196.80"), getEnv("REDIS_PORT", "6379"))
 	global.GVA_CONFIG.Redis.Password = getEnv("REDIS_PASSWORD", "")
 	global.GVA_CONFIG.Redis.DB, _ = strconv.Atoi(getEnv("REDIS_DB", "0"))
 
