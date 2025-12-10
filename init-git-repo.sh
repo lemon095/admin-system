@@ -94,7 +94,34 @@ echo "仓库配置:"
 git config --local --list | grep -E "(user\.|remote\.|branch\.)" || echo "无额外配置"
 echo ""
 
-# 7. 尝试拉取代码
+# 7. 检查 SSH 连接（如果使用 SSH URL）
+if echo "${GIT_REPO_URL}" | grep -q "^git@"; then
+    echo "🔍 检查 GitHub SSH 连接..."
+    if ! ssh -T git@github.com 2>&1 | grep -q "successfully authenticated\|Hi.*You've successfully authenticated"; then
+        echo "⚠️  GitHub SSH 认证失败"
+        echo ""
+        echo "   请先配置 SSH 密钥："
+        echo "   1. 运行: ./setup-github-ssh.sh"
+        echo "   2. 或使用 HTTPS 方式（需要 Personal Access Token）"
+        echo ""
+        read -p "   是否现在配置 SSH 密钥? (y/N): " -n 1 -r
+        echo ""
+        if [[ $REPLY =~ ^[Yy]$ ]]; then
+            if [ -f "./setup-github-ssh.sh" ]; then
+                bash ./setup-github-ssh.sh
+            else
+                echo "❌ 未找到 setup-github-ssh.sh 脚本"
+                echo "   请手动配置 SSH 密钥或使用 HTTPS 方式"
+            fi
+        fi
+        echo ""
+    else
+        echo "✅ GitHub SSH 连接正常"
+    fi
+    echo ""
+fi
+
+# 8. 尝试拉取代码
 echo "=========================================="
 echo "尝试拉取代码"
 echo "=========================================="
@@ -105,10 +132,18 @@ if git rev-parse --verify HEAD &> /dev/null; then
     git fetch origin 2>&1 || {
         echo "⚠️  无法连接到远程仓库，可能原因："
         echo "   1. 网络连接问题"
-        echo "   2. SSH 密钥未配置"
-        echo "   3. 仓库地址不正确"
+        echo "   2. SSH 密钥未配置（如果使用 SSH URL）"
+        echo "   3. Personal Access Token 未配置（如果使用 HTTPS URL）"
+        echo "   4. 仓库地址不正确"
         echo ""
-        echo "   请检查后手动执行:"
+        echo "   解决方案："
+        if echo "${GIT_REPO_URL}" | grep -q "^git@"; then
+            echo "   - 运行: ./setup-github-ssh.sh 配置 SSH 密钥"
+        else
+            echo "   - 检查 HTTPS URL 中是否包含正确的 token"
+        fi
+        echo ""
+        echo "   或手动执行:"
         echo "   git fetch origin"
         echo "   git checkout ${GIT_BRANCH}"
         echo "   git pull origin ${GIT_BRANCH}"
