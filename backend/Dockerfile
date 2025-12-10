@@ -1,4 +1,4 @@
-FROM golang:alpine as builder
+FROM registry.cn-hangzhou.aliyuncs.com/libraries/golang:1.21 AS builder
 
 WORKDIR /go/src/github.com/flipped-aurora/gin-vue-admin/server
 COPY . .
@@ -10,7 +10,7 @@ RUN go env -w GO111MODULE=on \
     && go mod tidy \
     && go build -o server .
 
-FROM alpine:latest
+FROM registry.cn-hangzhou.aliyuncs.com/libraries/alpine:latest
 
 LABEL MAINTAINER="SliverHorn@sliver_horn@qq.com"
 # 设置时区

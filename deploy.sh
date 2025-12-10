@@ -16,10 +16,10 @@ if ! docker info > /dev/null 2>&1; then
 fi
 
 # 检查docker-compose是否安装
-if command -v docker-compose &> /dev/null; then
-    COMPOSE_CMD="docker-compose"
-elif docker compose version &> /dev/null; then
+if docker compose version &> /dev/null; then
     COMPOSE_CMD="docker compose"
+elif command -v docker-compose &> /dev/null; then
+    COMPOSE_CMD="docker-compose"
 else
     echo "❌ 错误: docker-compose（或 docker compose） 未安装"
     exit 1
