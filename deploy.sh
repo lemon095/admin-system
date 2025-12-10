@@ -59,7 +59,24 @@ $COMPOSE_CMD down
 # 3. 构建并启动服务
 echo ""
 echo "🚀 步骤 3/4: 构建Docker镜像并启动服务..."
-$COMPOSE_CMD up -d --build
+
+# 检查 buildx 是否可用，如果不可用则使用传统构建方式
+if docker buildx version &> /dev/null 2>&1; then
+    BUILDX_VERSION=$(docker buildx version | grep -oE '[0-9]+\.[0-9]+' | head -1)
+    MAJOR=$(echo $BUILDX_VERSION | cut -d. -f1)
+    MINOR=$(echo $BUILDX_VERSION | cut -d. -f2)
+    
+    if [ "$MAJOR" -gt 0 ] || ([ "$MAJOR" -eq 0 ] && [ "$MINOR" -ge 17 ]); then
+        echo "✅ 使用 buildx 构建（版本: $BUILDX_VERSION）"
+        $COMPOSE_CMD up -d --build
+    else
+        echo "⚠️  buildx 版本过低（$BUILDX_VERSION），使用传统构建方式"
+        DOCKER_BUILDKIT=0 $COMPOSE_CMD up -d --build
+    fi
+else
+    echo "⚠️  buildx 未安装，使用传统构建方式"
+    DOCKER_BUILDKIT=0 $COMPOSE_CMD up -d --build
+fi
 
 # 4. 等待服务启动
 echo ""

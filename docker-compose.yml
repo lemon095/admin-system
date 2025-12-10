@@ -1,5 +1,3 @@
-version: "3.8"
-
 services:
   # MySQL和Redis已安装在宿主机上，不需要Docker容器
   # 后端服务将连接到宿主机的MySQL和Redis
@@ -11,9 +9,11 @@ services:
     container_name: admin-system-backend
     restart: always
     ports:
-      - "9020:9020"
-    env_file:
-      - .env
+      - "7701:7701"
+    # env_file 路径相对于 docker-compose.yml 文件
+    # 如果项目根目录有 .env 文件，取消下面的注释
+    # env_file:
+    #   - .env
     environment:
       # 连接到宿主机的MySQL和Redis
       # 使用host.docker.internal（如果支持）或宿主机IP
@@ -30,7 +30,7 @@ services:
       JWT_SECRET: ${JWT_SECRET:-your-secret-key-change-in-production}
       JWT_EXPIRE_HOURS: ${JWT_EXPIRE_HOURS:-72}
       JWT_REFRESH_THRESHOLD_HOURS: ${JWT_REFRESH_THRESHOLD_HOURS:-24}
-      SERVER_PORT: ${SERVER_PORT:-9020}
+      SERVER_PORT: ${SERVER_PORT:-7701}
       SERVER_MODE: ${SERVER_MODE:-release}
     # 连接到宿主机的MySQL和Redis
     # 方案1: 使用host.docker.internal (Docker 20.10+)
