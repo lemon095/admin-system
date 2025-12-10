@@ -1,6 +1,11 @@
-# 构建阶段
-# 如果无法访问 Docker Hub，请先配置 Docker 镜像加速器
-# 或者使用 Dockerfile.aliyun（如果服务器在阿里云）
+# 构建阶段 - 使用阿里云容器镜像服务
+# 如果服务器在阿里云且无法访问 Docker Hub，使用此 Dockerfile
+# 使用方法: docker build -f Dockerfile.aliyun -t admin-system-backend:latest .
+
+# 方案1: 使用阿里云容器镜像服务的公共镜像（如果可用）
+# FROM registry.cn-hangzhou.aliyuncs.com/acs/golang:1.21-alpine AS builder
+
+# 方案2: 如果方案1不可用，使用官方镜像（需要配置镜像加速器）
 FROM golang:1.21-alpine AS builder
 
 # 设置工作目录
@@ -32,8 +37,10 @@ RUN go build -ldflags="-w -s" -o server main.go
 RUN mkdir -p resource
 
 # 运行阶段
-# 如果无法访问 Docker Hub，请先配置 Docker 镜像加速器
-# 或者使用 Dockerfile.aliyun（如果服务器在阿里云）
+# 方案1: 使用阿里云容器镜像服务的公共镜像（如果可用）
+# FROM registry.cn-hangzhou.aliyuncs.com/acs/alpine:latest
+
+# 方案2: 如果方案1不可用，使用官方镜像（需要配置镜像加速器）
 FROM alpine:latest
 
 # 维护者信息
