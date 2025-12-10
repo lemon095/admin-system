@@ -1,31 +1,71 @@
-FROM registry.cn-hangzhou.aliyuncs.com/libraries/golang:1.21 AS builder
+# 构建阶段
+FROM golang:1.21-alpine AS builder
 
-WORKDIR /go/src/github.com/flipped-aurora/gin-vue-admin/server
+# 设置工作目录
+WORKDIR /build
+
+# 安装必要的构建工具
+RUN apk add --no-cache git make
+
+# 设置Go环境变量
+ENV GO111MODULE=on \
+    GOPROXY=https://goproxy.cn,direct \
+    GOSUMDB=sum.golang.google.cn \
+    CGO_ENABLED=0 \
+    GOOS=linux \
+    GOARCH=amd64
+
+# 复制go mod文件
+COPY go.mod go.sum ./
+# 下载依赖（利用Docker缓存层）
+RUN go mod download
+
+# 复制源代码
 COPY . .
 
-RUN go env -w GO111MODULE=on \
-    && go env -w GOPROXY=https://goproxy.cn,direct \
-    && go env -w CGO_ENABLED=0 \
-    && go env \
-    && go mod tidy \
-    && go build -o server .
+# 构建应用
+RUN go build -ldflags="-w -s" -o server main.go
 
-FROM registry.cn-hangzhou.aliyuncs.com/libraries/alpine:latest
+# 运行阶段
+FROM alpine:latest
 
-LABEL MAINTAINER="SliverHorn@sliver_horn@qq.com"
+# 维护者信息
+LABEL MAINTAINER="admin-system"
+
 # 设置时区
-ENV TZ=Asia/Shanghai
-RUN apk update && apk add --no-cache tzdata openntpd \
-    && ln -sf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
+ENV TZ=Asia/Shanghai \
+    LANG=C.UTF-8
 
-WORKDIR /go/src/github.com/flipped-aurora/gin-vue-admin/server
+# 安装必要的运行时依赖
+RUN apk add --no-cache \
+    tzdata \
+    ca-certificates \
+    && ln -sf /usr/share/zoneinfo/$TZ /etc/localtime \
+    && echo $TZ > /etc/timezone \
+    && update-ca-certificates
 
-COPY --from=0 /go/src/github.com/flipped-aurora/gin-vue-admin/server/server ./
-COPY --from=0 /go/src/github.com/flipped-aurora/gin-vue-admin/server/resource ./resource/
-COPY --from=0 /go/src/github.com/flipped-aurora/gin-vue-admin/server/config.docker.yaml ./
+# 创建非root用户
+RUN addgroup -g 1000 appgroup && \
+    adduser -D -u 1000 -G appgroup appuser
 
-# 挂载目录：如果使用了sqlite数据库，容器命令示例：docker run -d -v /宿主机路径/gva.db:/go/src/github.com/flipped-aurora/gin-vue-admin/server/gva.db -p 8888:8888 --name gva-server-v1 gva-server:1.0
-# VOLUME ["/go/src/github.com/flipped-aurora/gin-vue-admin/server"]
+# 设置工作目录
+WORKDIR /app
 
-EXPOSE 8888
-ENTRYPOINT ./server -c config.docker.yaml
+# 从构建阶段复制二进制文件
+COPY --from=builder --chown=appuser:appgroup /build/server ./
+
+# 复制资源文件（如果存在）
+COPY --from=builder --chown=appuser:appgroup /build/resource ./resource/ 2>/dev/null || true
+
+# 切换到非root用户
+USER appuser
+
+# 暴露端口（默认7701，可通过环境变量覆盖）
+EXPOSE 7701
+
+# 健康检查
+HEALTHCHECK --interval=30s --timeout=3s --start-period=40s --retries=3 \
+    CMD wget --no-verbose --tries=1 --spider http://localhost:7701/health || exit 1
+
+# 启动应用
+ENTRYPOINT ["./server"]

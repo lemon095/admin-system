@@ -1,141 +1,198 @@
 #!/bin/bash
 
-# 一键编译部署重启脚本
-# 使用方法: ./deploy.sh
+# ============================================
+# 管理系统 - 一键部署脚本
+# ============================================
+# 功能：
+#   1. 编译后端代码（可选，如果Go已安装）
+#   2. 停止旧服务
+#   3. 构建Docker镜像
+#   4. 启动服务
+#   5. 检查服务状态
+# ============================================
 
-set -e  # 遇到错误立即退出
+set -e
 
-echo "=========================================="
-echo "管理系统 - 一键部署脚本"
-echo "=========================================="
+# 颜色定义
+RED='\033[0;31m'
+GREEN='\033[0;32m'
+YELLOW='\033[1;33m'
+BLUE='\033[0;34m'
+NC='\033[0m'
+
+# 配置
+PROJECT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+BACKEND_DIR="${PROJECT_DIR}/backend"
+CONTAINER_NAME="admin-system-backend"
+SERVER_PORT="${SERVER_PORT:-7701}"
 
 # 检查Docker是否运行
-if ! docker info > /dev/null 2>&1; then
-    echo "❌ 错误: Docker未运行，请先启动Docker"
-    exit 1
-fi
-
-# 检查docker-compose是否安装
-if docker compose version &> /dev/null; then
-    COMPOSE_CMD="docker compose"
-elif command -v docker-compose &> /dev/null; then
-    COMPOSE_CMD="docker-compose"
-else
-    echo "❌ 错误: docker-compose（或 docker compose） 未安装"
-    exit 1
-fi
-
-# 1. 编译后端代码
-echo ""
-echo "📦 步骤 1/4: 编译后端代码..."
-cd backend
-
-# 检查Go是否安装
-if ! command -v go &> /dev/null; then
-    echo "⚠️  警告: Go未安装，跳过本地编译，将直接使用Docker构建"
-    cd ..
-else
-    echo "正在下载依赖..."
-    go env -w GOPROXY=https://goproxy.cn,direct
-    go env -w GOSUMDB=sum.golang.google.cn
-
-    go mod download
-    
-    echo "正在编译..."
-    if go build -o main .; then
-        echo "✅ 后端代码编译成功"
-    else
-        echo "❌ 后端代码编译失败"
+check_docker() {
+    if ! docker info > /dev/null 2>&1; then
+        echo -e "${RED}❌ 错误: Docker未运行，请先启动Docker${NC}"
         exit 1
     fi
-    cd ..
-fi
+}
 
-# 确保在项目根目录
-SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-cd "$SCRIPT_DIR"
-
-# 2. 停止旧服务
-echo ""
-echo "🛑 步骤 2/4: 停止旧服务..."
-$COMPOSE_CMD down
-
-# 3. 构建并启动服务
-echo ""
-echo "🚀 步骤 3/4: 构建Docker镜像并启动服务..."
-
-# 检查 buildx 是否可用且版本足够
-USE_BUILDX=false
-if docker buildx version &> /dev/null 2>&1; then
-    BUILDX_VERSION=$(docker buildx version 2>/dev/null | grep -oE '[0-9]+\.[0-9]+' | head -1 || echo "0.0")
-    if [ -n "$BUILDX_VERSION" ]; then
-        MAJOR=$(echo $BUILDX_VERSION | cut -d. -f1)
-        MINOR=$(echo $BUILDX_VERSION | cut -d. -f2)
-        
-        if [ "$MAJOR" -gt 0 ] || ([ "$MAJOR" -eq 0 ] && [ "$MINOR" -ge 17 ]); then
-            USE_BUILDX=true
-            echo "✅ 检测到 buildx 版本: $BUILDX_VERSION"
-        else
-            echo "⚠️  buildx 版本过低（$BUILDX_VERSION），需要 0.17+"
-        fi
-    fi
-fi
-
-# 如果 buildx 不可用，先使用 docker build 构建镜像
-if [ "$USE_BUILDX" = false ]; then
-    echo "⚠️  使用传统方式构建镜像（不使用 buildx）..."
-    cd backend
-    docker build -t admin-system-backend:latest .
-    cd ..
-    # 启动服务（不构建，因为已经构建好了）
-    $COMPOSE_CMD up -d
-else
-    # 使用 docker-compose 构建和启动
-    $COMPOSE_CMD up -d --build
-fi
-
-# 4. 等待服务启动
-echo ""
-echo "⏳ 步骤 4/4: 等待服务启动..."
-sleep 8
-
-# 检查服务状态
-echo ""
-echo "📊 服务状态:"
-$COMPOSE_CMD ps
-
-# 检查后端服务健康状态
-echo ""
-echo "🔍 检查后端服务..."
-max_attempts=10
-attempt=0
-while [ $attempt -lt $max_attempts ]; do
-    if curl -s http://localhost:7701/api/auth/userinfo > /dev/null 2>&1; then
-        echo "✅ 后端服务运行正常"
-        break
+# 检查并设置docker-compose命令
+setup_compose_cmd() {
+    if docker compose version &> /dev/null 2>&1; then
+        COMPOSE_CMD="docker compose"
+    elif command -v docker-compose &> /dev/null; then
+        COMPOSE_CMD="docker-compose"
     else
+        echo -e "${RED}❌ 错误: docker-compose（或 docker compose）未安装${NC}"
+        exit 1
+    fi
+}
+
+# 编译后端代码（可选）
+build_backend_optional() {
+    if ! command -v go &> /dev/null; then
+        echo -e "${YELLOW}⚠️  Go未安装，跳过本地编译（将使用Docker构建）${NC}"
+        return 0
+    fi
+
+    echo -e "${BLUE}📦 编译后端代码...${NC}"
+    cd "${BACKEND_DIR}"
+    
+    # 设置Go代理
+    go env -w GOPROXY=https://goproxy.cn,direct 2>/dev/null || true
+    go env -w GOSUMDB=sum.golang.google.cn 2>/dev/null || true
+    
+    # 下载依赖
+    echo "   下载依赖..."
+    go mod download
+    
+    # 编译
+    echo "   编译中..."
+    if go build -o main .; then
+        echo -e "${GREEN}✅ 后端代码编译成功${NC}"
+    else
+        echo -e "${YELLOW}⚠️  本地编译失败，将使用Docker构建${NC}"
+    fi
+    
+    cd "${PROJECT_DIR}"
+}
+
+# 停止旧服务
+stop_services() {
+    echo -e "${BLUE}🛑 停止旧服务...${NC}"
+    $COMPOSE_CMD down 2>/dev/null || true
+    echo -e "${GREEN}✅ 旧服务已停止${NC}"
+}
+
+# 构建Docker镜像
+build_image() {
+    echo -e "${BLUE}🔨 构建Docker镜像...${NC}"
+    
+    # 构建镜像
+    $COMPOSE_CMD build --no-cache
+    
+    if [ $? -eq 0 ]; then
+        echo -e "${GREEN}✅ 镜像构建成功${NC}"
+    else
+        echo -e "${RED}❌ 镜像构建失败${NC}"
+        exit 1
+    fi
+}
+
+# 启动服务
+start_services() {
+    echo -e "${BLUE}🚀 启动服务...${NC}"
+    $COMPOSE_CMD up -d
+    
+    if [ $? -eq 0 ]; then
+        echo -e "${GREEN}✅ 服务启动成功${NC}"
+    else
+        echo -e "${RED}❌ 服务启动失败${NC}"
+        exit 1
+    fi
+}
+
+# 等待服务启动
+wait_for_service() {
+    echo -e "${BLUE}⏳ 等待服务启动...${NC}"
+    sleep 5
+    
+    local max_attempts=15
+    local attempt=0
+    
+    while [ $attempt -lt $max_attempts ]; do
+        if curl -s -f "http://localhost:${SERVER_PORT}/api/auth/userinfo" > /dev/null 2>&1; then
+            echo -e "${GREEN}✅ 后端服务运行正常${NC}"
+            return 0
+        fi
+        
         attempt=$((attempt + 1))
-        if [ $attempt -eq $max_attempts ]; then
-            echo "⚠️  后端服务可能还在启动中，请稍后检查"
-        else
+        if [ $attempt -lt $max_attempts ]; then
+            echo "   等待中... (${attempt}/${max_attempts})"
             sleep 2
         fi
-    fi
-done
+    done
+    
+    echo -e "${YELLOW}⚠️  服务可能还在启动中，请稍后检查${NC}"
+    return 1
+}
 
-echo ""
-echo "=========================================="
-echo "✅ 部署完成！"
-echo "=========================================="
-echo "📌 服务地址:"
-echo "   后端API: http://localhost:7701"
-echo "   MySQL:   localhost:3306"
-echo "   Redis:   localhost:6379"
-echo ""
-echo "📝 常用命令:"
-echo "   查看日志:    docker-compose logs -f backend"
-echo "   查看所有日志: docker-compose logs -f"
-echo "   停止服务:    docker-compose down"
-echo "   重启服务:    docker-compose restart"
-echo "=========================================="
+# 显示服务状态
+show_status() {
+    echo ""
+    echo -e "${BLUE}📊 服务状态:${NC}"
+    $COMPOSE_CMD ps
+    
+    echo ""
+    echo -e "${GREEN}=========================================="
+    echo "✅ 部署完成！"
+    echo "==========================================${NC}"
+    echo ""
+    echo -e "${BLUE}📌 服务地址:${NC}"
+    echo "   后端API: http://localhost:${SERVER_PORT}"
+    echo "   MySQL:   localhost:3306"
+    echo "   Redis:   localhost:6379"
+    echo ""
+    echo -e "${BLUE}📝 常用命令:${NC}"
+    echo "   查看日志:    $COMPOSE_CMD logs -f backend"
+    echo "   查看状态:    $COMPOSE_CMD ps"
+    echo "   停止服务:    $COMPOSE_CMD down"
+    echo "   重启服务:    $COMPOSE_CMD restart backend"
+    echo "=========================================="
+}
 
+# 主函数
+main() {
+    echo -e "${GREEN}=========================================="
+    echo "管理系统 - 一键部署脚本"
+    echo "==========================================${NC}"
+    echo ""
+    
+    # 检查环境
+    check_docker
+    setup_compose_cmd
+    
+    # 步骤1: 可选编译后端代码
+    echo ""
+    build_backend_optional
+    
+    # 步骤2: 停止旧服务
+    echo ""
+    stop_services
+    
+    # 步骤3: 构建镜像
+    echo ""
+    build_image
+    
+    # 步骤4: 启动服务
+    echo ""
+    start_services
+    
+    # 步骤5: 等待并检查服务
+    echo ""
+    wait_for_service
+    
+    # 显示状态
+    show_status
+}
+
+# 执行主函数
+main "$@"
