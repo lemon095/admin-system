@@ -60,22 +60,34 @@ $COMPOSE_CMD down
 echo ""
 echo "🚀 步骤 3/4: 构建Docker镜像并启动服务..."
 
-# 检查 buildx 是否可用，如果不可用则使用传统构建方式
+# 检查 buildx 是否可用且版本足够
+USE_BUILDX=false
 if docker buildx version &> /dev/null 2>&1; then
-    BUILDX_VERSION=$(docker buildx version | grep -oE '[0-9]+\.[0-9]+' | head -1)
-    MAJOR=$(echo $BUILDX_VERSION | cut -d. -f1)
-    MINOR=$(echo $BUILDX_VERSION | cut -d. -f2)
-    
-    if [ "$MAJOR" -gt 0 ] || ([ "$MAJOR" -eq 0 ] && [ "$MINOR" -ge 17 ]); then
-        echo "✅ 使用 buildx 构建（版本: $BUILDX_VERSION）"
-        $COMPOSE_CMD up -d --build
-    else
-        echo "⚠️  buildx 版本过低（$BUILDX_VERSION），使用传统构建方式"
-        DOCKER_BUILDKIT=0 $COMPOSE_CMD up -d --build
+    BUILDX_VERSION=$(docker buildx version 2>/dev/null | grep -oE '[0-9]+\.[0-9]+' | head -1 || echo "0.0")
+    if [ -n "$BUILDX_VERSION" ]; then
+        MAJOR=$(echo $BUILDX_VERSION | cut -d. -f1)
+        MINOR=$(echo $BUILDX_VERSION | cut -d. -f2)
+        
+        if [ "$MAJOR" -gt 0 ] || ([ "$MAJOR" -eq 0 ] && [ "$MINOR" -ge 17 ]); then
+            USE_BUILDX=true
+            echo "✅ 检测到 buildx 版本: $BUILDX_VERSION"
+        else
+            echo "⚠️  buildx 版本过低（$BUILDX_VERSION），需要 0.17+"
+        fi
     fi
+fi
+
+# 如果 buildx 不可用，先使用 docker build 构建镜像
+if [ "$USE_BUILDX" = false ]; then
+    echo "⚠️  使用传统方式构建镜像（不使用 buildx）..."
+    cd backend
+    docker build -t admin-system-backend:latest .
+    cd ..
+    # 启动服务（不构建，因为已经构建好了）
+    $COMPOSE_CMD up -d
 else
-    echo "⚠️  buildx 未安装，使用传统构建方式"
-    DOCKER_BUILDKIT=0 $COMPOSE_CMD up -d --build
+    # 使用 docker-compose 构建和启动
+    $COMPOSE_CMD up -d --build
 fi
 
 # 4. 等待服务启动
