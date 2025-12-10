@@ -1,4 +1,6 @@
 # 构建阶段
+# 使用国内镜像源（如果 Docker 镜像加速器配置失败，可以尝试使用阿里云镜像）
+# FROM registry.cn-hangzhou.aliyuncs.com/acs/golang:1.21-alpine AS builder
 FROM golang:1.21-alpine AS builder
 
 # 设置工作目录
@@ -26,7 +28,12 @@ COPY . .
 # 构建应用
 RUN go build -ldflags="-w -s" -o server main.go
 
+# 确保 resource 目录存在（如果不存在则创建空目录）
+RUN mkdir -p resource
+
 # 运行阶段
+# 如果拉取 alpine:latest 失败，可以尝试使用国内镜像源
+# FROM registry.cn-hangzhou.aliyuncs.com/acs/alpine:latest
 FROM alpine:latest
 
 # 维护者信息
@@ -54,8 +61,8 @@ WORKDIR /app
 # 从构建阶段复制二进制文件
 COPY --from=builder --chown=appuser:appgroup /build/server ./
 
-# 复制资源文件（如果存在）
-COPY --from=builder --chown=appuser:appgroup /build/resource ./resource/ 2>/dev/null || true
+# 复制资源文件（resource 目录在构建阶段已确保存在）
+COPY --from=builder --chown=appuser:appgroup /build/resource ./resource/
 
 # 切换到非root用户
 USER appuser
