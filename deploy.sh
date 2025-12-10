@@ -51,6 +51,10 @@ else
     cd ..
 fi
 
+# 确保在项目根目录
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+cd "$SCRIPT_DIR"
+
 # 2. 停止旧服务
 echo ""
 echo "🛑 步骤 2/4: 停止旧服务..."
