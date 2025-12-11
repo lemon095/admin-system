@@ -24,7 +24,7 @@ NC='\033[0m'
 PROJECT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 BACKEND_DIR="${PROJECT_DIR}/backend"
 CONTAINER_NAME="admin-system-backend"
-SERVER_PORT="${SERVER_PORT:-7701}"
+SERVER_PORT="${SERVER_PORT:-9001}"
 
 # 检查Docker是否运行
 check_docker() {

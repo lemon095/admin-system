@@ -2,6 +2,7 @@
 .env
 .env.local
 /backend/.env.*
+/backend/admin-system
 !.env.example
 
 # Server info (contains sensitive information)
