@@ -18,10 +18,10 @@ services:
       # 连接到宿主机的MySQL和Redis
       # 使用host.docker.internal（如果支持）或宿主机IP
       DB_HOST: ${DB_HOST:-host.docker.internal}
-      DB_PORT: ${DB_PORT:-3306}
-      DB_USER: ${DB_USER:-root}
-      DB_PASSWORD: ${DB_PASSWORD:-root123456}
-      DB_NAME: ${DB_NAME:-admin_system}
+      DB_PORT: ${DB_PORT:-33301}
+      DB_USER: ${DB_USER:-game_user}
+      DB_PASSWORD: ${DB_PASSWORD:-*Chuchangkeji}
+      DB_NAME: ${DB_NAME:-bunker}
       DB_CHARSET: ${DB_CHARSET:-utf8mb4}
       REDIS_HOST: ${REDIS_HOST:-host.docker.internal}
       REDIS_PORT: ${REDIS_PORT:-6379}

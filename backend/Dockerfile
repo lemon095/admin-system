@@ -1,7 +1,7 @@
 # 构建阶段
 # 如果无法访问 Docker Hub，请先配置 Docker 镜像加速器
 # 或者使用 Dockerfile.aliyun（如果服务器在阿里云）
-FROM golang:1.21-alpine AS builder
+FROM golang:1.24-alpine AS builder
 
 # 设置工作目录
 WORKDIR /build
@@ -68,7 +68,7 @@ COPY --from=builder --chown=appuser:appgroup /build/resource ./resource/
 USER appuser
 
 # 暴露端口（默认7701，可通过环境变量覆盖）
-EXPOSE 7701
+EXPOSE 9001
 
 # 健康检查
 HEALTHCHECK --interval=30s --timeout=3s --start-period=40s --retries=3 \
