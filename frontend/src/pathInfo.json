@@ -1,5 +1,7 @@
 {
   "/src/view/about/index.vue": "About",
+  "/src/view/configure/monster/monster.vue": "Monster",
+  "/src/view/configure/monster/monsterForm.vue": "MonsterForm",
   "/src/view/dashboard/components/banner.vue": "Banner",
   "/src/view/dashboard/components/card.vue": "Card",
   "/src/view/dashboard/components/charts-content-numbers.vue": "ChartsContentNumbers",

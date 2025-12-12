@@ -1,3 +1,8 @@
 package configure
 
-type ServiceGroup struct{ MonsterService }
+type ServiceGroup struct {
+	MonsterService
+	WeaponService
+	BulletService
+	ArmorService
+}
