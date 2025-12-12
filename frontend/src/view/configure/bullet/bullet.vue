@@ -51,18 +51,20 @@
         @selection-change="handleSelectionChange"
         >
         <el-table-column type="selection" width="55" />
-        
-        <el-table-column sortable align="left" label="日期" prop="CreatedAt" width="180">
-            <template #default="scope">{{ formatDate(scope.row.CreatedAt) }}</template>
-        </el-table-column>
-        
+        <el-table-column label="编号" prop="ID" width="120" />
             <el-table-column align="left" label="name" prop="name" width="120" />
 
-            <el-table-column label="value" prop="value" width="200">
-    <template #default="scope">
-        [JSON]
-    </template>
-</el-table-column>
+            <el-table-column label="value" prop="value" show-overflow-tooltip>
+              <template #default="scope">
+                {{ scope.row.value }}
+              </template>
+            </el-table-column>
+            <el-table-column sortable align="left" label="创建日期" prop="CreatedAt" width="180">
+            <template #default="scope">{{ formatDate(scope.row.CreatedAt) }}</template>
+        </el-table-column>
+        <el-table-column sortable align="left" label="更新日期" prop="CreatedAt" width="180">
+            <template #default="scope">{{ formatDate(scope.row.UpdatedAt) }}</template>
+        </el-table-column>
         <el-table-column align="left" label="操作" fixed="right" :min-width="appStore.operateMinWith">
             <template #default="scope">
             <el-button  type="primary" link class="table-button" @click="getDetails(scope.row)"><el-icon style="margin-right: 5px"><InfoFilled /></el-icon>查看</el-button>
@@ -107,6 +109,9 @@
 
     <el-drawer destroy-on-close :size="appStore.drawerSize" v-model="detailShow" :show-close="true" :before-close="closeDetailShow" title="查看">
             <el-descriptions :column="1" border>
+                              <el-descriptions-item label="编号">
+                  {{ detailForm.ID }}
+                </el-descriptions-item>
                     <el-descriptions-item label="name">
     {{ detailForm.name }}
 </el-descriptions-item>
