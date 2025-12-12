@@ -20,6 +20,7 @@ func Viper() *viper.Viper {
 
 	v := viper.New()
 	v.SetConfigFile("env")
+	v.SetConfigType("env")
 	v.AutomaticEnv()
 
 	global.GVA_CONFIG.Mysql.Path = getEnv("DB_HOST", "rm-2ze72h0maxcrf682uno.mysql.rds.aliyuncs.com")
@@ -43,12 +44,15 @@ func Viper() *viper.Viper {
 	global.GVA_CONFIG.Zap.Director = getEnv("ZAP_DIRECTOR", "log")
 
 	global.GVA_CONFIG.System.Addr = getEnv("SERVER_PORT", "9001")
+	global.GVA_CONFIG.System.RouterPrefix = getEnv("RouterPrefix", "/api")
+
 	//ServerMode = getEnv("SERVER_MODE", "release")
 
 	global.GVA_CONFIG.Local.StorePath = getEnv("LOCAL_STORE_PATH", "uploads/file")
 
 	// root 适配性 根据root位置去找到对应迁移位置,保证root路径有效
 	global.GVA_CONFIG.AutoCode.Root, _ = filepath.Abs("..")
+	global.GVA_CONFIG.AutoCode.Server = getEnv("Server", "backend")
 
 	global.GVA_CONFIG.Captcha.KeyLong, _ = strconv.Atoi(getEnv("CAPTCHA_KEY_LONG", "6"))
 	global.GVA_CONFIG.Captcha.ImgWidth, _ = strconv.Atoi(getEnv("CAPTCHA_IMG_WIDTH", "240"))
