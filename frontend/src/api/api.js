@@ -14,7 +14,7 @@ import service from '@/utils/request'
 // }
 export const getApiList = (data) => {
   return service({
-    url: '/api/getApiList',
+    url: '/getApiList',
     method: 'post',
     data
   })
@@ -30,7 +30,7 @@ export const getApiList = (data) => {
 // @Router /api/createApi [post]
 export const createApi = (data) => {
   return service({
-    url: '/api/createApi',
+    url: '/createApi',
     method: 'post',
     data
   })
@@ -78,7 +78,7 @@ export const updateApi = (data) => {
 // @Router /api/setAuthApi [post]
 export const setAuthApi = (data) => {
   return service({
-    url: '/api/setAuthApi',
+    url: '/setAuthApi',
     method: 'post',
     data
   })
@@ -93,7 +93,7 @@ export const setAuthApi = (data) => {
 // @Router /api/getAllApis [post]
 export const getAllApis = (data) => {
   return service({
-    url: '/api/getAllApis',
+    url: '/getAllApis',
     method: 'post',
     data
   })
@@ -109,7 +109,7 @@ export const getAllApis = (data) => {
 // @Router /api/deleteApi [post]
 export const deleteApi = (data) => {
   return service({
-    url: '/api/deleteApi',
+    url: '/deleteApi',
     method: 'post',
     data
   })
@@ -140,7 +140,7 @@ export const deleteApisByIds = (data) => {
 // @Router    /api/freshCasbin [get]
 export const freshCasbin = () => {
   return service({
-    url: '/api/freshCasbin',
+    url: '/freshCasbin',
     method: 'get'
   })
 }
@@ -154,14 +154,14 @@ export const syncApi = () => {
 
 export const getApiGroups = () => {
   return service({
-    url: '/api/getApiGroups',
+    url: '/getApiGroups',
     method: 'get'
   })
 }
 
 export const ignoreApi = (data) => {
   return service({
-    url: '/api/ignoreApi',
+    url: '/ignoreApi',
     method: 'post',
     data
   })
@@ -169,7 +169,7 @@ export const ignoreApi = (data) => {
 
 export const enterSyncApi = (data) => {
   return service({
-    url: '/api/enterSyncApi',
+    url: '/enterSyncApi',
     method: 'post',
     data
   })

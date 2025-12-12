@@ -53,6 +53,7 @@ func Viper() *viper.Viper {
 	// root 适配性 根据root位置去找到对应迁移位置,保证root路径有效
 	global.GVA_CONFIG.AutoCode.Root, _ = filepath.Abs("..")
 	global.GVA_CONFIG.AutoCode.Server = getEnv("Server", "backend")
+	global.GVA_CONFIG.AutoCode.Web = getEnv("Web", "frontend/src")
 
 	global.GVA_CONFIG.Captcha.KeyLong, _ = strconv.Atoi(getEnv("CAPTCHA_KEY_LONG", "6"))
 	global.GVA_CONFIG.Captcha.ImgWidth, _ = strconv.Atoi(getEnv("CAPTCHA_IMG_WIDTH", "240"))

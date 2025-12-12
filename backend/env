@@ -1,0 +1,27 @@
+ALIYUN-OSS={     }
+AUTOCODE={frontend/src /Users/xuchao/project/go/admin-system backend github.com/flipped-aurora/gin-vue-admin/server }
+AWS-S3={       false false}
+CAPTCHA={6 240 80 0 3600}
+CLOUDFLARE-R2={     }
+CORS={ []}
+DB-LIST=[]
+DISK-LIST=[]
+EMAIL={     0 false false}
+EXCEL={}
+HUA-WEI-OBS={    }
+JWT={a4aa2824-c790-40de-94c5-2ace4c3d9cd4 72h 24h }
+LOCAL={ uploads/file}
+MCP={     0 false}
+MINIO={    false  }
+MONGO={      0 0 0 0 false []}
+MSSQL={{         0 0 false false}}
+MYSQL={{ 33301 charset=utf8mb4&parseTime=True&loc=Local bunker game_user *Chuchangkeji rm-2ze72h0maxcrf682uno.mysql.rds.aliyuncs.com  error 10 100 false false}}
+ORACLE={{         0 0 false false}}
+PGSQL={{         0 0 false false}}
+QINIU={     false false}
+REDIS={ 172.28.196.80:6379  0 false []}
+REDIS-LIST=[]
+SQLITE={{         0 0 false false}}
+SYSTEM={mysql  /api 9001 0 0 false false false false false}
+TENCENT-COS={     }
+ZAP={info  console log   false false 0}
