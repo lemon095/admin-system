@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # 设置路径
-FRONTEND_DIR="/usr/local/admin-system/frontend"
+FRONTEND_DIR="/usr/local/admin-system"
 BACKEND_DIR="/usr/local/admin-system/backend"
 
 # -------------------------------
