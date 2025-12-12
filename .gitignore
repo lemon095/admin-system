@@ -2,9 +2,9 @@
 .env
 .env.local
 /backend/.env.*
-/backend/admin-system
+/backend/main
 !.env.example
-
+/dist
 # Server info (contains sensitive information)
 server-info.md
 
