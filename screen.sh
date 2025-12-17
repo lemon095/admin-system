@@ -34,6 +34,6 @@ GOOS=linux GOARCH=amd64 go build -o main main.go || { echo "Go 编译失败"; ex
 screen -S backend -X quit 2>/dev/null || echo "backend screen 不存在，直接创建"
 
 # 启动 backend screen 会话
-screen -dmS backend /bin/bash -c "/usr/local/admin-system/backend/main >> /var/log/app.log 2>&1"
+screen -dmS backend /bin/bash -c "/usr/local/admin-system/backend/main server -c config/settings.yml >> /var/log/app.log 2>&1"
 
 echo "backend 已重启"
