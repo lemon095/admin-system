@@ -1,203 +1,119 @@
-import axios from 'axios' // 引入axios
-import { useUserStore } from '@/pinia/modules/user'
-import { ElLoading, ElMessage } from 'element-plus'
-import { emitter } from '@/utils/bus'
-import router from '@/router/index'
+import axios from 'axios'
+import { MessageBox, Message } from 'element-ui'
+import store from '@/store'
+import { getToken } from '@/utils/auth'
 
+// create an axios instance
 const service = axios.create({
-  baseURL: import.meta.env.VITE_BASE_API,
-  timeout: 99999
+  baseURL: process.env.VUE_APP_BASE_API, // url = base url + request url
+  // withCredentials: true, // send cookies when cross-domain requests
+  timeout: 10000 // request timeout
 })
-let activeAxios = 0
-let timer
-let loadingInstance
-let isLoadingVisible = false
-let forceCloseTimer
 
-const showLoading = (
-  option = {
-    target: null
-  }
-) => {
-  const loadDom = document.getElementById('gva-base-load-dom')
-  activeAxios++
-
-  // 清除之前的定时器
-  if (timer) {
-    clearTimeout(timer)
-  }
-
-  // 清除强制关闭定时器
-  if (forceCloseTimer) {
-    clearTimeout(forceCloseTimer)
-  }
-
-  timer = setTimeout(() => {
-    // 再次检查activeAxios状态，防止竞态条件
-    if (activeAxios > 0 && !isLoadingVisible) {
-      if (!option.target) option.target = loadDom
-      loadingInstance = ElLoading.service(option)
-      isLoadingVisible = true
-
-      // 设置强制关闭定时器，防止loading永远不关闭（30秒超时）
-      forceCloseTimer = setTimeout(() => {
-        if (isLoadingVisible && loadingInstance) {
-          console.warn('Loading强制关闭：超时30秒')
-          loadingInstance.close()
-          isLoadingVisible = false
-          activeAxios = 0 // 重置计数器
-        }
-      }, 30000)
-    }
-  }, 400)
-}
-
-const closeLoading = () => {
-  activeAxios--
-  if (activeAxios <= 0) {
-    activeAxios = 0 // 确保不会变成负数
-    clearTimeout(timer)
-
-    if (forceCloseTimer) {
-      clearTimeout(forceCloseTimer)
-      forceCloseTimer = null
-    }
-
-    if (isLoadingVisible && loadingInstance) {
-      loadingInstance.close()
-      isLoadingVisible = false
-    }
-    loadingInstance = null
-  }
-}
-
-// 全局重置loading状态的函数，用于异常情况
-const resetLoading = () => {
-  activeAxios = 0
-  isLoadingVisible = false
-
-  if (timer) {
-    clearTimeout(timer)
-    timer = null
-  }
-
-  if (forceCloseTimer) {
-    clearTimeout(forceCloseTimer)
-    forceCloseTimer = null
-  }
-
-  if (loadingInstance) {
-    try {
-      loadingInstance.close()
-    } catch (e) {
-      console.warn('关闭loading时出错:', e)
-    }
-    loadingInstance = null
-  }
-}
-
-// http request 拦截器
+// request interceptor
 service.interceptors.request.use(
-  (config) => {
-    if (!config.donNotShowLoading) {
-      showLoading(config.loadingOption)
-    }
-    const userStore = useUserStore()
-    config.headers = {
-      'Content-Type': 'application/json',
-      'x-token': userStore.token,
-      'x-user-id': userStore.userInfo.ID,
-      ...config.headers
+  config => {
+    // do something before request is sent
+
+    if (store.getters.token) {
+      // let each request carry token
+      // ['X-Token'] is a custom headers key
+      // please modify it according to the actual situation
+      config.headers['Authorization'] = 'Bearer ' + getToken()
+      config.headers['Content-Type'] = 'application/json'
     }
     return config
   },
-  (error) => {
-    if (!error.config.donNotShowLoading) {
-      closeLoading()
-    }
-    emitter.emit('show-error', {
-      code: 'request',
-      message: error.message || '请求发送失败'
-    })
-    return error
-  }
-)
-
-function getErrorMessage(error) {
-  // 优先级： 响应体中的 msg > statusText > 默认消息
-  return error.response?.data?.msg || error.response?.statusText || '请求失败'
-}
-
-// http response 拦截器
-service.interceptors.response.use(
-  (response) => {
-    const userStore = useUserStore()
-    if (!response.config.donNotShowLoading) {
-      closeLoading()
-    }
-    if (response.headers['new-token']) {
-      userStore.setToken(response.headers['new-token'])
-    }
-    if (typeof response.data.code === 'undefined') {
-      return response
-    }
-    if (response.data.code === 0 || response.headers.success === 'true') {
-      if (response.headers.msg) {
-        response.data.msg = decodeURI(response.headers.msg)
-      }
-      return response.data
-    } else {
-      ElMessage({
-        showClose: true,
-        message: response.data.msg || decodeURI(response.headers.msg),
-        type: 'error'
-      })
-      return response.data.msg ? response.data : response
-    }
-  },
-  (error) => {
-    if (!error.config.donNotShowLoading) {
-      closeLoading()
-    }
-
-    if (!error.response) {
-      // 网络错误
-      resetLoading()
-      emitter.emit('show-error', {
-        code: 'network',
-        message: getErrorMessage(error)
-      })
-      return Promise.reject(error)
-    }
-
-    // HTTP 状态码错误
-    if (error.response.status === 401) {
-      emitter.emit('show-error', {
-        code: '401',
-        message: getErrorMessage(error),
-        fn: () => {
-          const userStore = useUserStore()
-          userStore.ClearStorage()
-          router.push({ name: 'Login', replace: true })
-        }
-      })
-      return Promise.reject(error)
-    }
-
-    emitter.emit('show-error', {
-      code: error.response.status,
-      message: getErrorMessage(error)
-    })
+  error => {
+    // do something with request error
+    console.log(error) // for debug
     return Promise.reject(error)
   }
 )
 
-// 监听页面卸载事件，确保loading被正确清理
-if (typeof window !== 'undefined') {
-  window.addEventListener('beforeunload', resetLoading)
-  window.addEventListener('unload', resetLoading)
-}
+// response interceptor
+service.interceptors.response.use(
+  /**
+   * If you want to get http information such as headers or status
+   * Please return  response => response
+  */
 
-// 导出service和resetLoading函数
-export { resetLoading }
+  /**
+   * Determine the request status by custom code
+   * Here is just an example
+   * You can also judge the status by HTTP Status Code
+   */
+  response => {
+    const code = response.data.code
+    if (code === 401) {
+      store.dispatch('user/resetToken')
+      if (location.href.indexOf('login') !== -1) {
+        location.reload() // 为了重新实例化vue-router对象 避免bug
+      } else {
+        MessageBox.confirm(
+          '登录状态已过期，您可以继续留在该页面，或者重新登录',
+          '系统提示',
+          {
+            confirmButtonText: '重新登录',
+            cancelButtonText: '取消',
+            type: 'warning'
+          }
+        ).then(() => {
+          location.reload() // 为了重新实例化vue-router对象 避免bug
+        })
+      }
+    } else if (code === 6401) {
+      store.dispatch('user/resetToken')
+      MessageBox.confirm(
+        '登录状态已过期，您可以继续留在该页面，或者重新登录',
+        '系统提示',
+        {
+          confirmButtonText: '重新登录',
+          cancelButtonText: '取消',
+          type: 'warning'
+        }
+      ).then(() => {
+        location.reload() // 为了重新实例化vue-router对象 避免bug
+      })
+      return false
+    } else if (code === 400 || code === 403) {
+      Message({
+        message: response.data.msg,
+        type: 'error',
+        duration: 5 * 1000
+      })
+    } else if (code !== 200) {
+      // Notification.error({
+      //   title: response.data.msg
+      // })
+      Message({
+        message: response.data.msg,
+        type: 'error'
+      })
+      return Promise.reject('error')
+    } else {
+      return response.data
+    }
+  },
+  error => {
+    if (error.message === 'Network Error') {
+      Message({
+        message: '服务器连接异常，请检查服务器！',
+        type: 'error',
+        duration: 5 * 1000
+      })
+      return
+    }
+    console.log('err' + error) // for debug
+
+    Message({
+      message: error.message,
+      type: 'error',
+      duration: 5 * 1000
+    })
+
+    return Promise.reject(error)
+  }
+)
+
 export default service
