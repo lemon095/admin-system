@@ -48,7 +48,7 @@ func (m *{{.ClassName}}GetPageReq) GetNeedSearch() interface{} {
 	return *m
 }
 
-type {{.ClassName}}InsertReq struct {
+type {{.ClassName}}Req struct {
     {{- range .Columns -}}
     {{$x := .Pk}}
     {{- if ($x) }}
@@ -62,6 +62,10 @@ type {{.ClassName}}InsertReq struct {
     {{.GoField}} {{.GoType}} `json:"{{.JsonField}}" comment:"{{.ColumnComment}}"`
     {{- end -}}
     {{- end }}
+}
+
+type {{.ClassName}}InsertReq struct {
+    {{.ClassName}}Req
     common.ControlBy
 }
 
@@ -89,19 +93,7 @@ func (s *{{.ClassName}}InsertReq) GetId() interface{} {
 }
 
 type {{.ClassName}}UpdateReq struct {
-    {{- range .Columns -}}
-    {{$x := .Pk}}
-    {{- if ($x) }}
-    {{.GoField}} {{.GoType}} `uri:"{{.JsonField}}" comment:"{{.ColumnComment}}"` // {{.ColumnComment}}
-    {{- else if eq .GoField "CreatedAt" -}}
-    {{- else if eq .GoField "UpdatedAt" -}}
-    {{- else if eq .GoField "DeletedAt" -}}
-    {{- else if eq .GoField "CreateBy" -}}
-    {{- else if eq .GoField "UpdateBy" -}}
-    {{- else }}
-    {{.GoField}} {{.GoType}} `json:"{{.JsonField}}" comment:"{{.ColumnComment}}"`
-    {{- end -}}
-    {{- end }}
+    {{.ClassName}}Req
     common.ControlBy
 }
 
