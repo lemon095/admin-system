@@ -48,16 +48,27 @@
 
         <el-table v-loading="loading" :data="configureMonsterList" @selection-change="handleSelectionChange">
           <el-table-column type="selection" width="55" align="center" /><el-table-column
-            label=""
+            label="编号"
+            align="center"
+            prop="id"
+            :show-overflow-tooltip="true"
+          /><el-table-column
+            label="名称"
             align="center"
             prop="name"
             :show-overflow-tooltip="true"
           /><el-table-column
-            label=""
+            label="属性"
             align="center"
             prop="value"
             :show-overflow-tooltip="true"
           />
+          <el-table-column sortable align="left" label="创建时间" prop="createdAt" width="180">
+            <template #default="scope">{{ formatDate(scope.row.createdAt) }}</template>
+        </el-table-column>
+          <el-table-column sortable align="left" label="更新时间" prop="updatedAt" width="180">
+            <template #default="scope">{{ formatDate(scope.row.updatedAt) }}</template>
+        </el-table-column>
           <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
             <template slot-scope="scope">
               <el-button
@@ -125,6 +136,7 @@
 
 <script>
 import { addConfigureMonster, delConfigureMonster, getConfigureMonster, listConfigureMonster, updateConfigureMonster } from '@/api/admin/configure-monster'
+import { formatDate } from '@/utils/index'
 
 export default {
   name: 'ConfigureMonster',
@@ -162,6 +174,7 @@ export default {
       // 表单参数
       form: {
       },
+      formatDate,
       // 表单校验
       rules: {}
     }
