@@ -34,10 +34,9 @@
             <template slot-scope="scope">
               <el-select v-model="scope.row.goType">
                 <el-option label="int64" value="int64" />
-                <el-option label="decimal" value="decimal.Decimal" />
                 <el-option label="string" value="string" />
-                <el-option label="int" value="int" />
-                <el-option label="bool" value="bool" />
+                <!-- <el-option label="int" value="int" />
+                <el-option label="bool" value="bool" /> -->
               </el-select>
             </template>
           </el-table-column>
