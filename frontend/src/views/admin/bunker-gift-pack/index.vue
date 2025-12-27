@@ -102,7 +102,7 @@
                                 <el-table-column label="详情" align="center" prop="giftDesc" :show-overflow-tooltip="true"/>
                             <el-table-column label="状态" align="center" prop="isEnable" :show-overflow-tooltip="true">
                                 <template #default="scope">
-                                    <el-button v-if="scope.row.isEnable === 1" type="success" @click="giftPackStatus(scope.row.id)">启用</el-button>
+                                    <el-button v-if="scope.row.isEnable === 0" type="success" @click="giftPackStatus(scope.row.id)">启用</el-button>
                                     <el-button v-else type="danger" @click="giftPackStatus(scope.row.id)">禁用</el-button>
                                 </template>
                             </el-table-column>

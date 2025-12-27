@@ -17,7 +17,7 @@ type Auction struct {
 }
 
 func (Auction) TableName() string {
-	return "auction"
+	return "bunker_auction_items"
 }
 
 func (e *Auction) Generate() models.ActiveRecord {
