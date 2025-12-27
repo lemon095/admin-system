@@ -149,7 +149,7 @@ func (e SysUser) Update(c *gin.Context) {
 		return
 	}
 
-	req.SetUpdateBy(user.GetUserId(c))
+	req.SetOperator(user.GetUserName(c))
 
 	//数据权限检查
 	p := actions.GetPermissionFromContext(c)
@@ -185,7 +185,7 @@ func (e SysUser) Delete(c *gin.Context) {
 	}
 
 	// 设置编辑人
-	req.SetUpdateBy(user.GetUserId(c))
+	req.SetOperator(user.GetUserName(c))
 
 	// 数据权限检查
 	p := actions.GetPermissionFromContext(c)
@@ -270,7 +270,7 @@ func (e SysUser) UpdateStatus(c *gin.Context) {
 		return
 	}
 
-	req.SetUpdateBy(user.GetUserId(c))
+	req.SetOperator(user.GetUserName(c))
 
 	//数据权限检查
 	p := actions.GetPermissionFromContext(c)
@@ -307,7 +307,7 @@ func (e SysUser) ResetPwd(c *gin.Context) {
 		return
 	}
 
-	req.SetUpdateBy(user.GetUserId(c))
+	req.SetOperator(user.GetUserName(c))
 
 	//数据权限检查
 	p := actions.GetPermissionFromContext(c)

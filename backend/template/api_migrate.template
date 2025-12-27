@@ -62,7 +62,7 @@ func _{{.GenerateTime}}Test(db *gorm.DB, version string) error {
         Mmenu.Visible = "0"
         Mmenu.IsFrame = "0"
         Mmenu.CreateBy = "1"
-        Mmenu.UpdateBy = "1"
+        Mmenu.Operator = "1"
         Mmenu.CreatedAt = timeNow
         Mmenu.UpdatedAt = timeNow
         // Mmenu.MenuId, err = Mmenu.Create(db)
@@ -85,7 +85,7 @@ func _{{.GenerateTime}}Test(db *gorm.DB, version string) error {
         Cmenu.Visible = "0"
         Cmenu.IsFrame = "0"
         Cmenu.CreateBy = "1"
-        Cmenu.UpdateBy = "1"
+        Cmenu.Operator = "1"
         Cmenu.CreatedAt = timeNow
         Cmenu.UpdatedAt = timeNow
         // Cmenu.MenuId, err = Cmenu.Create(db)
@@ -108,7 +108,7 @@ func _{{.GenerateTime}}Test(db *gorm.DB, version string) error {
         MList.Visible = "0"
         MList.IsFrame = "0"
         MList.CreateBy = "1"
-        MList.UpdateBy = "1"
+        MList.Operator = "1"
         MList.CreatedAt = timeNow
         MList.UpdatedAt = timeNow
         // MList.MenuId, err = MList.Create(db)
@@ -131,7 +131,7 @@ func _{{.GenerateTime}}Test(db *gorm.DB, version string) error {
         MCreate.Visible = "0"
         MCreate.IsFrame = "0"
         MCreate.CreateBy = "1"
-        MCreate.UpdateBy = "1"
+        MCreate.Operator = "1"
         MCreate.CreatedAt = timeNow
         MCreate.UpdatedAt = timeNow
         // MCreate.MenuId, err = MCreate.Create(db)
@@ -154,7 +154,7 @@ func _{{.GenerateTime}}Test(db *gorm.DB, version string) error {
         MUpdate.Visible = "0"
         MUpdate.IsFrame = "0"
         MUpdate.CreateBy = "1"
-        MUpdate.UpdateBy = "1"
+        MUpdate.Operator = "1"
         MUpdate.CreatedAt = timeNow
         MUpdate.UpdatedAt = timeNow
         // MUpdate.MenuId, err = MUpdate.Create(db)
@@ -177,7 +177,7 @@ func _{{.GenerateTime}}Test(db *gorm.DB, version string) error {
         MDelete.Visible = "0"
         MDelete.IsFrame = "0"
         MDelete.CreateBy = "1"
-        MDelete.UpdateBy = "1"
+        MDelete.Operator = "1"
         MDelete.CreatedAt = timeNow
         MDelete.UpdatedAt = timeNow
         // MDelete.MenuId, err = MDelete.Create(db)
@@ -200,7 +200,7 @@ func _{{.GenerateTime}}Test(db *gorm.DB, version string) error {
         Amenu.Visible = "1"
         Amenu.IsFrame = "0"
         Amenu.CreateBy = "1"
-        Amenu.UpdateBy = "1"
+        Amenu.Operator = "1"
         Amenu.CreatedAt = timeNow
         Amenu.UpdatedAt = timeNow
         // Amenu.MenuId, err = Amenu.Create(db)
@@ -222,7 +222,7 @@ func _{{.GenerateTime}}Test(db *gorm.DB, version string) error {
         AList.Visible = "1"
         AList.IsFrame = "0"
         AList.CreateBy = "1"
-        AList.UpdateBy = "1"
+        AList.Operator = "1"
         AList.CreatedAt = timeNow
         AList.UpdatedAt = timeNow
         // AList.MenuId, err = AList.Create(db)
@@ -244,7 +244,7 @@ func _{{.GenerateTime}}Test(db *gorm.DB, version string) error {
         AGet.Visible = "1"
         AGet.IsFrame = "0"
         AGet.CreateBy = "1"
-        AGet.UpdateBy = "1"
+        AGet.Operator = "1"
         AGet.CreatedAt = timeNow
         AGet.UpdatedAt = timeNow
         // AGet.MenuId, err = AGet.Create(db)
@@ -266,7 +266,7 @@ func _{{.GenerateTime}}Test(db *gorm.DB, version string) error {
         ACreate.Visible = "1"
         ACreate.IsFrame = "0"
         ACreate.CreateBy = "1"
-        ACreate.UpdateBy = "1"
+        ACreate.Operator = "1"
         ACreate.CreatedAt = timeNow
         ACreate.UpdatedAt = timeNow
         // ACreate.MenuId, err = ACreate.Create(db)
@@ -288,7 +288,7 @@ func _{{.GenerateTime}}Test(db *gorm.DB, version string) error {
         AUpdate.Visible = "1"
         AUpdate.IsFrame = "0"
         AUpdate.CreateBy = "1"
-        AUpdate.UpdateBy = "1"
+        AUpdate.Operator = "1"
         AUpdate.CreatedAt = timeNow
         AUpdate.UpdatedAt = timeNow
         // AUpdate.MenuId, err = AUpdate.Create(db)
@@ -310,7 +310,7 @@ func _{{.GenerateTime}}Test(db *gorm.DB, version string) error {
         ADelete.Visible = "1"
         ADelete.IsFrame = "0"
         ADelete.CreateBy = "1"
-        ADelete.UpdateBy = "1"
+        ADelete.Operator = "1"
         ADelete.CreatedAt = timeNow
         ADelete.UpdatedAt = timeNow
         //ADelete.MenuId, err = ADelete.Create(db)

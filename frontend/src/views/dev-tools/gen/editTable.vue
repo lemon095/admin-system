@@ -38,6 +38,7 @@
                 <el-option label="decimal" value="decimal.Decimal" />
                 <el-option label="int" value="int" />
                 <el-option label="bool" value="bool" />
+                <el-option label="uint8" value="uint8" />
               </el-select>
             </template>
           </el-table-column>

@@ -141,7 +141,7 @@ func (e SysDept) Update(c *gin.Context) {
 		e.Error(500, err, err.Error())
 		return
 	}
-	req.SetUpdateBy(user.GetUserId(c))
+	req.SetOperator(user.GetUserName(c))
 	err = s.Update(&req)
 	if err != nil {
 		e.Error(500, err, err.Error())

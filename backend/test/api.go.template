@@ -104,7 +104,7 @@ func Update{{.ClassName}}(c *gin.Context) {
 var data models.{{.ClassName}}
 err := c.BindWith(&data, binding.JSON)
 pkg.HasError(err, "数据解析失败", -1)
-data.UpdateBy = utils.GetUserIdStr(c)
+data.Operator = utils.GetUserIdStr(c)
 result, err := data.Update(data.{{.PkGoField}})
 pkg.HasError(err, "", -1)
 
@@ -116,7 +116,7 @@ c.JSON(http.StatusOK, res.ReturnOK())
 func Delete{{.ClassName}}(c *gin.Context) {
 var data models.{{.ClassName}}
 id, err := utils.StringToInt(c.Param("{{.PkJsonField}}"))
-data.UpdateBy = utils.GetUserIdStr(c)
+data.Operator = utils.GetUserIdStr(c)
 _, err = data.Delete(id)
 pkg.HasError(err, "修改失败", 500)
 

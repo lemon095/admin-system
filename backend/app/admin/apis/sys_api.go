@@ -108,7 +108,7 @@ func (e SysApi) Update(c *gin.Context) {
 		e.Logger.Error(err)
 		return
 	}
-	req.SetUpdateBy(user.GetUserId(c))
+	req.SetOperator(user.GetUserName(c))
 	p := actions.GetPermissionFromContext(c)
 	err = s.Update(&req, p)
 	if err != nil {

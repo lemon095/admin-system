@@ -138,7 +138,7 @@ func (e SysDictType) Update(c *gin.Context) {
 		e.Logger.Error(err)
 		return
 	}
-	req.SetUpdateBy(user.GetUserId(c))
+	req.SetOperator(user.GetUserName(c))
 	err = s.Update(&req)
 	if err != nil {
 		e.Logger.Error(err)
@@ -168,7 +168,7 @@ func (e SysDictType) Delete(c *gin.Context) {
 		e.Error(500, err, err.Error())
 		return
 	}
-	req.SetUpdateBy(user.GetUserId(c))
+	req.SetOperator(user.GetUserName(c))
 	err = s.Remove(&req)
 	if err != nil {
 		e.Error(500, err, err.Error())

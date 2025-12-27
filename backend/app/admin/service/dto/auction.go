@@ -4,6 +4,8 @@ import (
 	"go-admin/app/admin/models"
 	"go-admin/common/dto"
 	common "go-admin/common/models"
+
+	"github.com/shopspring/decimal"
 )
 
 type AuctionGetPageReq struct {
@@ -25,10 +27,10 @@ func (m *AuctionGetPageReq) GetNeedSearch() interface{} {
 }
 
 type AuctionInsertReq struct {
-	Id       int    `json:"-" comment:""` //
-	PriceMin int64  `json:"priceMin" comment:"价格下限"`
-	PriceMax int64  `json:"priceMax" comment:"价格上限"`
-	Desc     string `json:"desc" comment:"文本"`
+	Id       int             `json:"-" comment:""` //
+	PriceMin decimal.Decimal `json:"priceMin" comment:"价格下限"`
+	PriceMax decimal.Decimal `json:"priceMax" comment:"价格上限"`
+	Desc     string          `json:"desc" comment:"文本"`
 	common.ControlBy
 }
 
@@ -46,10 +48,10 @@ func (s *AuctionInsertReq) GetId() interface{} {
 }
 
 type AuctionUpdateReq struct {
-	Id       int    `uri:"id" comment:""` //
-	PriceMin int64  `json:"priceMin" comment:"价格下限"`
-	PriceMax int64  `json:"priceMax" comment:"价格上限"`
-	Desc     string `json:"desc" comment:"文本"`
+	Id       int             `uri:"id" comment:""` //
+	PriceMin decimal.Decimal `json:"priceMin" comment:"价格下限"`
+	PriceMax decimal.Decimal `json:"priceMax" comment:"价格上限"`
+	Desc     string          `json:"desc" comment:"文本"`
 	common.ControlBy
 }
 

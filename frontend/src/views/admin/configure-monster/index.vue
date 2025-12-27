@@ -69,6 +69,7 @@
           <el-table-column sortable align="left" label="更新时间" prop="updatedAt" width="180">
             <template #default="scope">{{ formatDate(scope.row.updatedAt) }}</template>
         </el-table-column>
+        <el-table-column label="操作人" align="center" prop="operator"/>
           <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
             <template slot-scope="scope">
               <el-button

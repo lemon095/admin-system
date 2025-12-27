@@ -36,7 +36,7 @@ func UpdateAction(control dto.Control) gin.HandlerFunc {
 			response.Error(c, 500, err, "模型生成失败")
 			return
 		}
-		object.SetUpdateBy(user.GetUserId(c))
+		object.SetOperator(user.GetUserName(c))
 
 		//数据权限检查
 		p := GetPermissionFromContext(c)

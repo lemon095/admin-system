@@ -104,7 +104,7 @@ func (e *SysMenu) Insert(c *dto.SysMenuInsertReq) *SysMenu {
 		e.Log.Errorf("db error:%s", err)
 		_ = e.AddError(err)
 	}
-	err = tx.Create(&data).Error
+	err = tx.Omit("operator").Create(&data).Error
 	if err != nil {
 		tx.Rollback()
 		e.Log.Errorf("db error:%s", err)
@@ -166,7 +166,7 @@ func (e *SysMenu) Update(c *dto.SysMenuUpdateReq) *SysMenu {
 	}
 	c.Generate(&model)
 	model.SysApi = alist
-	db := tx.Model(&model).Session(&gorm.Session{FullSaveAssociations: true}).Debug().Save(&model)
+	db := tx.Model(&model).Session(&gorm.Session{FullSaveAssociations: true}).Debug().Where("menu_id=?", model.MenuId).Updates(&model)
 	if err = db.Error; err != nil {
 		e.Log.Errorf("db error:%s", err)
 		_ = e.AddError(err)

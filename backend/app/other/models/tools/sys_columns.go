@@ -44,7 +44,7 @@ type SysColumns struct {
 	FkLabelName        string       `gorm:"size:255;" json:"fkLabelName"`
 	CreateBy           int          `gorm:"column:create_by;size:20;" json:"createBy"`
 	UpdateBy           int          `gorm:"column:update_By;size:20;" json:"updateBy"`
-
+	Operator           string       `gorm:"->:column:operator;size:8;" json:"operator"`
 	common.ModelTime
 }
 
@@ -92,7 +92,7 @@ func (e *SysColumns) Update(tx *gorm.DB) (update SysColumns, err error) {
 
 	//参数1:是要修改的数据
 	//参数2:是修改的数据
-	e.UpdateBy = 0
+	e.Operator = ""
 	if err = tx.Table("sys_columns").Model(&update).Updates(&e).Error; err != nil {
 		return
 	}

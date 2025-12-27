@@ -39,8 +39,8 @@ func (s *SysPostInsertReq) Generate(model *models.SysPost) {
 	model.Sort = s.Sort
 	model.Status = s.Status
 	model.Remark = s.Remark
-	if s.ControlBy.UpdateBy != 0 {
-		model.UpdateBy = s.UpdateBy
+	if s.ControlBy.Operator != "" {
+		model.Operator = s.Operator
 	}
 	if s.ControlBy.CreateBy != 0 {
 		model.CreateBy = s.CreateBy
@@ -70,8 +70,8 @@ func (s *SysPostUpdateReq) Generate(model *models.SysPost) {
 	model.Sort = s.Sort
 	model.Status = s.Status
 	model.Remark = s.Remark
-	if s.ControlBy.UpdateBy != 0 {
-		model.UpdateBy = s.UpdateBy
+	if s.ControlBy.Operator != "" {
+		model.Operator = s.Operator
 	}
 	if s.ControlBy.CreateBy != 0 {
 		model.CreateBy = s.CreateBy
@@ -98,8 +98,8 @@ type SysPostDeleteReq struct {
 }
 
 func (s *SysPostDeleteReq) Generate(model *models.SysPost) {
-	if s.ControlBy.UpdateBy != 0 {
-		model.UpdateBy = s.UpdateBy
+	if s.ControlBy.Operator != "" {
+		model.Operator = s.Operator
 	}
 	if s.ControlBy.CreateBy != 0 {
 		model.CreateBy = s.CreateBy

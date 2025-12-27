@@ -321,7 +321,7 @@ func (e SysTable) Update(c *gin.Context) {
 		return
 	}
 
-	data.UpdateBy = 0
+	data.Operator = ""
 	result, err := data.Update(db)
 	if err != nil {
 		log.Errorf("Update error, %s", err.Error())

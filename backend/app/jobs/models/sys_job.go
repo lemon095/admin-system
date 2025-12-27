@@ -2,6 +2,7 @@ package models
 
 import (
 	"go-admin/common/models"
+
 	"gorm.io/gorm"
 )
 
@@ -40,8 +41,8 @@ func (e *SysJob) SetCreateBy(createBy int) {
 	e.CreateBy = createBy
 }
 
-func (e *SysJob) SetUpdateBy(updateBy int) {
-	e.UpdateBy = updateBy
+func (e *SysJob) SetOperator(operator string) {
+	e.Operator = operator
 }
 
 func (e *SysJob) GetList(tx *gorm.DB, list interface{}) (err error) {

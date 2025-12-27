@@ -146,7 +146,7 @@ func (e ConfigureArmor) Update(c *gin.Context) {
 		e.Error(500, err, err.Error())
 		return
 	}
-	req.SetUpdateBy(user.GetUserId(c))
+	req.SetOperator(user.GetUserName(c))
 	p := actions.GetPermissionFromContext(c)
 
 	err = s.Update(&req, p)
@@ -179,7 +179,7 @@ func (e ConfigureArmor) Delete(c *gin.Context) {
 		return
 	}
 
-	// req.SetUpdateBy(user.GetUserId(c))
+	// req.SetOperator(user.GetUserName(c))
 	p := actions.GetPermissionFromContext(c)
 
 	err = s.Remove(&req, p)
