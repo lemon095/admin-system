@@ -1,10 +1,38 @@
-
 <template>
     <BasicLayout>
         <template #wrapper>
             <el-card class="box-card">
                 <el-form ref="queryForm" :model="queryParams" :inline="true" label-width="68px">
-                    
+                    <el-form-item label="兑换码" prop="redeemCode">
+                        <el-input
+                            v-model="queryParams.redeemCode"
+                            placeholder="请输入兑换码"
+                            clearable
+                            size="mini"
+                            style="width: 180px;"
+                        />
+                    </el-form-item>
+                    <el-form-item label="礼包名称" prop="giftName">
+                        <el-input
+                            v-model="queryParams.giftName"
+                            placeholder="请输入礼包名称"
+                            clearable
+                            size="mini"
+                            style="width: 180px;"
+                        />
+                    </el-form-item>
+                    <el-form-item label="状态" prop="isEnable">
+                        <el-select
+                            v-model="queryParams.isEnable"
+                            placeholder="请选择状态"
+                            clearable
+                            size="mini"
+                            style="width: 120px;"
+                        >
+                            <el-option label="启用" :value="1" />
+                            <el-option label="禁用" :value="0" />
+                        </el-select>
+                    </el-form-item>
                     <el-form-item>
                         <el-button type="primary" icon="el-icon-search" size="mini" @click="handleQuery">搜索</el-button>
                         <el-button icon="el-icon-refresh" size="mini" @click="resetQuery">重置</el-button>
@@ -241,7 +269,9 @@
                 queryParams: {
                     pageIndex: 1,
                     pageSize: 10,
-                    
+                    redeemCode: null,
+                    giftName: null,
+                    isEnable: null,
                 },
                 // 表单参数
                 form: {

@@ -20,13 +20,21 @@ type GiftPack struct {
 func (e *GiftPack) GetPage(c *dto.GiftPackGetPageReq, p *actions.DataPermission, list *[]models.GiftPack, count *int64) error {
 	var err error
 	var data models.GiftPack
+	db := e.Orm.Model(&data)
+	if c.IsEnable != nil {
+		db = db.Where("is_enable = ?", c.IsEnable)
+	}
+	if c.GiftName != nil {
+		db = db.Where("gift_name = ?", c.GiftName)
+	}
+	if c.RedeemCode != nil {
+		db = db.Where("redeem_code = ?", c.RedeemCode)
+	}
 
-	err = e.Orm.Model(&data).
-		Scopes(
-			cDto.MakeCondition(c.GetNeedSearch()),
-			cDto.Paginate(c.GetPageSize(), c.GetPageIndex()),
-			actions.Permission(data.TableName(), p),
-		).
+	err = db.Scopes(
+		cDto.Paginate(c.GetPageSize(), c.GetPageIndex()),
+		actions.Permission(data.TableName(), p),
+	).
 		Find(list).Limit(-1).Offset(-1).
 		Count(count).Error
 	if err != nil {

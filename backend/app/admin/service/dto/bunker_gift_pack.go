@@ -12,6 +12,10 @@ import (
 type GiftPackGetPageReq struct {
 	dto.Pagination `search:"-"`
 	GiftPackOrder
+
+	IsEnable   *global.Status `form:"isEnable"`
+	GiftName   *string        `form:"giftName"`
+	RedeemCode *string        `form:"redeemCode"`
 }
 
 type GiftPackOrder struct {
@@ -67,6 +71,7 @@ func (s *GiftPackInsertReq) Generate(model *models.GiftPack) {
 	model.StartAt = s.StartAt
 	model.EndAt = s.EndAt
 	model.CreatedBy = s.CreatedBy
+	model.IsEnable = global.STATUS_DISABLE
 }
 
 func (s *GiftPackInsertReq) GetId() interface{} {
