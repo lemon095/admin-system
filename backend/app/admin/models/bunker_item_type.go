@@ -7,7 +7,8 @@ import (
 type ItemType struct {
 	models.Model
 
-	Name string `json:"name" gorm:"type:varchar(8);comment:道具类型"`
+	Name     string `json:"name" gorm:"type:varchar(8);comment:道具类型"`
+	Operator string `gorm:"column:operator;type:varchar(8);comment:操作人" json:"operator"`
 	models.ModelTime
 	models.ControlBy
 }

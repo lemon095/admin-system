@@ -63,8 +63,8 @@ func (s *SysMenuInsertReq) Generate(model *models.SysMenu) {
 	if s.CreateBy != 0 {
 		model.CreateBy = s.CreateBy
 	}
-	if s.Operator != "" {
-		model.Operator = s.Operator
+	if s.UpdateBy != 0 {
+		model.UpdateBy = s.UpdateBy
 	}
 }
 
@@ -117,8 +117,8 @@ func (s *SysMenuUpdateReq) Generate(model *models.SysMenu) {
 	if s.CreateBy != 0 {
 		model.CreateBy = s.CreateBy
 	}
-	if s.Operator != "" {
-		model.Operator = s.Operator
+	if s.UpdateBy != 0 {
+		model.UpdateBy = s.UpdateBy
 	}
 }
 

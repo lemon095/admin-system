@@ -153,7 +153,7 @@ func (e *SysRole) Update(c *dto.SysRoleUpdateReq, cb *casbin.SyncedEnforcer) err
 	c.Generate(&model)
 	model.SysMenu = &mlist
 	// 更新关联的数据，使用 FullSaveAssociations 模式
-	db := tx.Session(&gorm.Session{FullSaveAssociations: true}).Debug().Save(&model)
+	db := tx.Session(&gorm.Session{FullSaveAssociations: true}).Debug().Omit("operator").Save(&model)
 
 	if err = db.Error; err != nil {
 		e.Log.Errorf("db error:%s", err)
@@ -267,7 +267,7 @@ func (e *SysRole) UpdateDataScope(c *dto.RoleDataScopeReq) *SysRole {
 	c.Generate(&model)
 	model.SysDept = dlist
 	// 更新关联的数据，使用 FullSaveAssociations 模式
-	db := tx.Model(&model).Session(&gorm.Session{FullSaveAssociations: true}).Debug().Save(&model)
+	db := tx.Model(&model).Session(&gorm.Session{FullSaveAssociations: true}).Debug().Omit("operator").Save(&model)
 	if err = db.Error; err != nil {
 		e.Log.Errorf("db error:%s", err)
 		_ = e.AddError(err)
@@ -298,7 +298,7 @@ func (e *SysRole) UpdateStatus(c *dto.UpdateStatusReq) error {
 	tx.First(&model, c.GetId())
 	c.Generate(&model)
 	// 更新关联的数据，使用 FullSaveAssociations 模式
-	db := tx.Session(&gorm.Session{FullSaveAssociations: true}).Debug().Save(&model)
+	db := tx.Session(&gorm.Session{FullSaveAssociations: true}).Debug().Omit("operator").Save(&model)
 	if err = db.Error; err != nil {
 		e.Log.Errorf("db error:%s", err)
 		return err

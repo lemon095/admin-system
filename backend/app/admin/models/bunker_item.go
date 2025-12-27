@@ -15,6 +15,7 @@ type Item struct {
 	Icon     string        `json:"icon" gorm:"type:varchar(255);comment:图片地址"`
 	Extend   *string       `json:"extend" gorm:"type:json;comment:扩展属性"`
 	IsEnable global.Status `json:"isEnable" gorm:"type:tinyint(1);comment:状态(0:启用 1:禁用)"`
+	Operator string        `gorm:"column:operator;type:varchar(8);comment:操作人" json:"operator"`
 	models.ModelTime
 	models.ControlBy
 }

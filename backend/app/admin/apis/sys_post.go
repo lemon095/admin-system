@@ -143,7 +143,7 @@ func (e SysPost) Update(c *gin.Context) {
 		return
 	}
 
-	req.SetOperator(user.GetUserName(c))
+	//req.Operator = user.GetUserName(c)
 
 	err = s.Update(&req)
 	if err != nil {
@@ -174,7 +174,7 @@ func (e SysPost) Delete(c *gin.Context) {
 		e.Error(500, err, err.Error())
 		return
 	}
-	req.SetOperator(user.GetUserName(c))
+	//req.Operator = user.GetUserName(c)
 	err = s.Remove(&req)
 	if err != nil {
 		e.Error(500, err, fmt.Sprintf("岗位删除失败！错误详情：%s", err.Error()))

@@ -164,7 +164,7 @@ func (e SysRole) Update(c *gin.Context) {
 	}
 	cb := sdk.Runtime.GetCasbinKey(c.Request.Host)
 
-	req.SetOperator(user.GetUserName(c))
+	//req.Operator = user.GetUserName(c)
 
 	err = s.Update(&req, cb)
 	if err != nil {
@@ -238,7 +238,7 @@ func (e SysRole) Update2Status(c *gin.Context) {
 		e.Error(500, err, fmt.Sprintf("更新角色状态失败，失败原因：%s ", err.Error()))
 		return
 	}
-	req.SetOperator(user.GetUserName(c))
+	//req.Operator = user.GetUserName(c)
 	err = s.UpdateStatus(&req)
 	if err != nil {
 		e.Error(500, err, fmt.Sprintf("更新角色状态失败，失败原因：%s ", err.Error()))
@@ -270,12 +270,12 @@ func (e SysRole) Update2DataScope(c *gin.Context) {
 		e.Error(500, err, err.Error())
 		return
 	}
-	data := &models.SysRole{
-		RoleId:    req.RoleId,
-		DataScope: req.DataScope,
-		DeptIds:   req.DeptIds,
-	}
-	data.Operator = user.GetUserName(c)
+	//data := &models.SysRole{
+	//	RoleId:    req.RoleId,
+	//	DataScope: req.DataScope,
+	//	DeptIds:   req.DeptIds,
+	//}
+	//data.Operator = user.GetUserName(c)
 	err = s.UpdateDataScope(&req).Error
 	if err != nil {
 		e.Error(500, err, fmt.Sprintf("更新角色数据权限失败！错误详情：%s", err.Error()))

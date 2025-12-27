@@ -74,7 +74,7 @@ func (e *SysPost) Update(c *dto.SysPostUpdateReq) error {
 	e.Orm.First(&model, c.GetId())
 	c.Generate(&model)
 
-	db := e.Orm.Save(&model)
+	db := e.Orm.Omit("operator").Save(&model)
 	if err = db.Error; err != nil {
 		e.Log.Errorf("db error:%s", err)
 		return err

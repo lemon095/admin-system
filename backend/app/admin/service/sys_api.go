@@ -79,7 +79,7 @@ func (e *SysApi) Update(c *dto.SysApiUpdateReq, p *actions.DataPermission) error
 		return errors.New("无权更新该数据")
 	}
 	c.Generate(&model)
-	db = e.Orm.Save(&model)
+	db = e.Orm.Omit("operator").Save(&model)
 	if err := db.Error; err != nil {
 		e.Log.Errorf("Service UpdateSysApi error:%s", err)
 		return err

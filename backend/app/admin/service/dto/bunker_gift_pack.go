@@ -53,6 +53,7 @@ type GiftPackInsertReq struct {
 	StartAt       time.Time     `json:"startAt" comment:"有效时间起始"`
 	EndAt         time.Time     `json:"endAt" comment:"有效时间截止"`
 	IsEnable      global.Status `json:"isEnable" comment:"状态(0:启用 1:禁用)"`
+	Operator      string        `json:"operator" comment:""`
 	common.ControlBy
 }
 
@@ -91,6 +92,7 @@ type GiftPackUpdateReq struct {
 	StartAt       time.Time     `json:"startAt" comment:"有效时间起始"`
 	EndAt         time.Time     `json:"endAt" comment:"有效时间截止"`
 	IsEnable      global.Status `json:"isEnable" comment:"状态(0:启用 1:禁用)"`
+	Operator      string        `json:"operator" comment:""`
 	common.ControlBy
 }
 

@@ -68,7 +68,7 @@ func (e *SysConfig) Update(c *dto.SysConfigControl) error {
 	var model = models.SysConfig{}
 	e.Orm.First(&model, c.GetId())
 	c.Generate(&model)
-	db := e.Orm.Save(&model)
+	db := e.Orm.Omit("operator").Save(&model)
 	err = db.Error
 	if err != nil {
 		e.Log.Errorf("Service UpdateSysConfig error:%s", err)
@@ -89,7 +89,7 @@ func (e *SysConfig) SetSysConfig(c *[]dto.GetSetSysConfigReq) error {
 		e.Orm.Where("config_key = ?", req.ConfigKey).First(&model)
 		if model.Id != 0 {
 			req.Generate(&model)
-			db := e.Orm.Save(&model)
+			db := e.Orm.Omit("operator").Save(&model)
 			err = db.Error
 			if err != nil {
 				e.Log.Errorf("Service SetSysConfig error:%s", err)

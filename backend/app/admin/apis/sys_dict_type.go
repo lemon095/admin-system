@@ -2,12 +2,13 @@ package apis
 
 import (
 	"fmt"
+	"go-admin/app/admin/models"
+
 	"github.com/gin-gonic/gin"
 	"github.com/gin-gonic/gin/binding"
 	"github.com/go-admin-team/go-admin-core/sdk/api"
 	"github.com/go-admin-team/go-admin-core/sdk/pkg/jwtauth/user"
 	_ "github.com/go-admin-team/go-admin-core/sdk/pkg/response"
-	"go-admin/app/admin/models"
 
 	"go-admin/app/admin/service"
 	"go-admin/app/admin/service/dto"
@@ -138,7 +139,7 @@ func (e SysDictType) Update(c *gin.Context) {
 		e.Logger.Error(err)
 		return
 	}
-	req.SetOperator(user.GetUserName(c))
+	//req.Operator = user.GetUserName(c)
 	err = s.Update(&req)
 	if err != nil {
 		e.Logger.Error(err)
@@ -168,7 +169,7 @@ func (e SysDictType) Delete(c *gin.Context) {
 		e.Error(500, err, err.Error())
 		return
 	}
-	req.SetOperator(user.GetUserName(c))
+	//req.Operator = user.GetUserName(c)
 	err = s.Remove(&req)
 	if err != nil {
 		e.Error(500, err, err.Error())

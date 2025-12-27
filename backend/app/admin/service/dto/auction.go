@@ -31,6 +31,7 @@ type AuctionInsertReq struct {
 	PriceMin decimal.Decimal `json:"priceMin" comment:"价格下限"`
 	PriceMax decimal.Decimal `json:"priceMax" comment:"价格上限"`
 	Desc     string          `json:"desc" comment:"文本"`
+	Operator string          `json:"operator" comment:""`
 	common.ControlBy
 }
 
@@ -52,6 +53,7 @@ type AuctionUpdateReq struct {
 	PriceMin decimal.Decimal `json:"priceMin" comment:"价格下限"`
 	PriceMax decimal.Decimal `json:"priceMax" comment:"价格上限"`
 	Desc     string          `json:"desc" comment:"文本"`
+	Operator string          `json:"operator" comment:""`
 	common.ControlBy
 }
 

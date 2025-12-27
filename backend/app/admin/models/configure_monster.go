@@ -9,8 +9,9 @@ import (
 type ConfigureMonster struct {
 	models.Model
 
-	Name  string         `json:"name" gorm:"type:varchar(8);comment:Name"`
-	Value datatypes.JSON `json:"value" gorm:"type:json;comment:Value"`
+	Name     string         `json:"name" gorm:"type:varchar(8);comment:Name"`
+	Value    datatypes.JSON `json:"value" gorm:"type:json;comment:Value"`
+	Operator string         `gorm:"column:operator;type:varchar(8);comment:操作人" json:"operator"`
 	models.ModelTime
 	models.ControlBy
 }

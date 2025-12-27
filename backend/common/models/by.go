@@ -5,19 +5,13 @@ import (
 )
 
 type ControlBy struct {
-	CreateBy int    `json:"createBy" gorm:"-"`
-	UpdateBy int    `json:"updateBy" gorm:"-"`
-	Operator string `gorm:"column:operator" json:"operator"`
+	CreateBy int `json:"createBy" gorm:"-"`
+	UpdateBy int `json:"updateBy" gorm:"-"`
 }
 
 // SetCreateBy 设置创建人id
 func (e *ControlBy) SetCreateBy(createBy int) {
 	e.CreateBy = createBy
-}
-
-// SetOperator 设置修改人id
-func (e *ControlBy) SetOperator(operator string) {
-	e.Operator = operator
 }
 
 func (e *ControlBy) SetUpdateBy(updateBy int) {

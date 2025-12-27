@@ -12,6 +12,7 @@ type Auction struct {
 	PriceMin decimal.Decimal `json:"priceMin" gorm:"type:decimal(10,2);comment:价格下限"`
 	PriceMax decimal.Decimal `json:"priceMax" gorm:"type:decimal(10,2);comment:价格上限"`
 	Desc     string          `json:"desc" gorm:"type:varchar(255);comment:文本"`
+	Operator string          `gorm:"column:operator" json:"operator"`
 	models.ModelTime
 	models.ControlBy
 }

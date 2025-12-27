@@ -27,9 +27,10 @@ func (m *ConfigureMonsterGetPageReq) GetNeedSearch() interface{} {
 }
 
 type ConfigureMonsterInsertReq struct {
-	Id    int            `json:"-" comment:""` //
-	Name  string         `json:"name" comment:""`
-	Value datatypes.JSON `json:"value" comment:""`
+	Id       int            `json:"-" comment:""` //
+	Name     string         `json:"name" comment:""`
+	Value    datatypes.JSON `json:"value" comment:""`
+	Operator string         `json:"operator" comment:""`
 	common.ControlBy
 }
 
@@ -46,9 +47,10 @@ func (s *ConfigureMonsterInsertReq) GetId() interface{} {
 }
 
 type ConfigureMonsterUpdateReq struct {
-	Id    int            `uri:"id" comment:""` //
-	Name  string         `json:"name" comment:""`
-	Value datatypes.JSON `json:"value" comment:""`
+	Id       int            `uri:"id" comment:""` //
+	Name     string         `json:"name" comment:""`
+	Value    datatypes.JSON `json:"value" comment:""`
+	Operator string         `json:"operator" comment:""`
 	common.ControlBy
 }
 

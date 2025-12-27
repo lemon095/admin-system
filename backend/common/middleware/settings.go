@@ -40,29 +40,4 @@ var CasbinExclude = []UrlInfo{
 	{Url: "/api/v1/public/uploadFile", Method: "POST"},
 	{Url: "/api/v1/user/pwd/set", Method: "PUT"},
 	{Url: "/api/v1/sys-user", Method: "PUT"},
-
-	// TODO 先加完配置在这里加规则
-	{Url: "/api/v1/configure-monster", Method: "GET"},
-	{Url: "/api/v1/configure-monster/:id", Method: "GET"},
-	{Url: "/api/v1/configure-monster", Method: "DELETE"},
-	{Url: "/api/v1/configure-monster", Method: "POST"},
-	{Url: "/api/v1/configure-monster/:id", Method: "PUT"},
-
-	{Url: "/api/v1/configure-bullet", Method: "GET"},
-	{Url: "/api/v1/configure-bullet/:id", Method: "GET"},
-	{Url: "/api/v1/configure-bullet/:id", Method: "PUT"},
-	{Url: "/api/v1/configure-bullet", Method: "DELETE"},
-	{Url: "/api/v1/configure-bullet", Method: "POST"},
-
-	{Url: "/api/v1/configure-weapon", Method: "GET"},
-	{Url: "/api/v1/configure-weapon/:id", Method: "GET"},
-	{Url: "/api/v1/configure-weapon/:id", Method: "PUT"},
-	{Url: "/api/v1/configure-weapon", Method: "DELETE"},
-	{Url: "/api/v1/configure-weapon", Method: "POST"},
-
-	{Url: "/api/v1/configure-armor", Method: "GET"},
-	{Url: "/api/v1/configure-armor/:id", Method: "GET"},
-	{Url: "/api/v1/configure-armor/:id", Method: "PUT"},
-	{Url: "/api/v1/configure-armor", Method: "DELETE"},
-	{Url: "/api/v1/configure-armor", Method: "POST"},
 }

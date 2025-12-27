@@ -28,6 +28,7 @@ type GiftpackRedeemsInsertReq struct {
 	Id              int    `json:"-" comment:""` //
 	RedeemerUnionId string `json:"redeemerUnionId" comment:"兑换人微信union_id"`
 	RedeemCode      string `json:"redeemCode" comment:"兑换码"`
+	Operator        string `json:"operator" comment:""`
 	common.ControlBy
 }
 
@@ -47,6 +48,7 @@ type GiftpackRedeemsUpdateReq struct {
 	Id              int    `uri:"id" comment:""` //
 	RedeemerUnionId string `json:"redeemerUnionId" comment:"兑换人微信union_id"`
 	RedeemCode      string `json:"redeemCode" comment:"兑换码"`
+	Operator        string `json:"operator" comment:""`
 	common.ControlBy
 }
 

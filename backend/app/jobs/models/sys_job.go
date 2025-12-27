@@ -41,10 +41,6 @@ func (e *SysJob) SetCreateBy(createBy int) {
 	e.CreateBy = createBy
 }
 
-func (e *SysJob) SetOperator(operator string) {
-	e.Operator = operator
-}
-
 func (e *SysJob) GetList(tx *gorm.DB, list interface{}) (err error) {
 	return tx.Table(e.TableName()).Where("status = ?", 2).Find(list).Error
 }

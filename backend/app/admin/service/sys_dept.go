@@ -115,7 +115,7 @@ func (e *SysDept) Update(c *dto.SysDeptUpdateReq) error {
 		deptPath = "/0/" + deptPath
 	}
 	model.DeptPath = deptPath
-	db := tx.Save(&model)
+	db := tx.Omit("operator").Save(&model)
 	if err = db.Error; err != nil {
 		e.Log.Errorf("UpdateSysDept error:%s", err)
 		return err

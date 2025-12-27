@@ -77,7 +77,7 @@ func (e *SysDictType) Update(c *dto.SysDictTypeUpdateReq) error {
 	var model = models.SysDictType{}
 	e.Orm.First(&model, c.GetId())
 	c.Generate(&model)
-	db := e.Orm.Save(&model)
+	db := e.Orm.Omit("operator").Save(&model)
 	if err = db.Error; err != nil {
 		e.Log.Errorf("db error: %s", err)
 		return err

@@ -1,10 +1,11 @@
 package apis
 
 import (
-	"github.com/gin-gonic/gin/binding"
 	"go-admin/app/admin/models"
-	"golang.org/x/crypto/bcrypt"
 	"net/http"
+
+	"github.com/gin-gonic/gin/binding"
+	"golang.org/x/crypto/bcrypt"
 
 	"github.com/gin-gonic/gin"
 	"github.com/go-admin-team/go-admin-core/sdk/api"
@@ -149,7 +150,7 @@ func (e SysUser) Update(c *gin.Context) {
 		return
 	}
 
-	req.SetOperator(user.GetUserName(c))
+	//req.Operator = user.GetUserName(c)
 
 	//数据权限检查
 	p := actions.GetPermissionFromContext(c)
@@ -185,7 +186,7 @@ func (e SysUser) Delete(c *gin.Context) {
 	}
 
 	// 设置编辑人
-	req.SetOperator(user.GetUserName(c))
+	//req.Operator = user.GetUserName(c)
 
 	// 数据权限检查
 	p := actions.GetPermissionFromContext(c)
@@ -270,7 +271,7 @@ func (e SysUser) UpdateStatus(c *gin.Context) {
 		return
 	}
 
-	req.SetOperator(user.GetUserName(c))
+	//req.Operator = user.GetUserName(c)
 
 	//数据权限检查
 	p := actions.GetPermissionFromContext(c)
@@ -307,7 +308,7 @@ func (e SysUser) ResetPwd(c *gin.Context) {
 		return
 	}
 
-	req.SetOperator(user.GetUserName(c))
+	//req.Operator = user.GetUserName(c)
 
 	//数据权限检查
 	p := actions.GetPermissionFromContext(c)

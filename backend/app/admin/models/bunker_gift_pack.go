@@ -23,6 +23,7 @@ type GiftPack struct {
 	EndAt         time.Time     `json:"endAt" gorm:"type:datetime;comment:有效时间截止"`
 	IsEnable      global.Status `json:"isEnable" gorm:"type:tinyint(1);comment:状态(0:启用 1:禁用)"`
 	CreatedBy     string        `json:"created_by" gorm:"type:varchar(8);comment:创建人"`
+	Operator      string        `gorm:"column:operator;type:varchar(8);comment:操作人" json:"operator"`
 	models.ModelTime
 	models.ControlBy
 }

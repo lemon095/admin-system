@@ -24,8 +24,9 @@ func (m *ItemTypeGetPageReq) GetNeedSearch() interface{} {
 }
 
 type ItemTypeInsertReq struct {
-	Id   int    `json:"-" comment:""` //
-	Name string `json:"name" comment:"道具类型"`
+	Id       int    `json:"-" comment:""` //
+	Name     string `json:"name" comment:"道具类型"`
+	Operator string `json:"operator" comment:""`
 	common.ControlBy
 }
 
@@ -41,8 +42,9 @@ func (s *ItemTypeInsertReq) GetId() interface{} {
 }
 
 type ItemTypeUpdateReq struct {
-	Id   int    `json:"id" comment:""` //
-	Name string `json:"name" comment:"道具类型"`
+	Id       int    `json:"id" comment:""` //
+	Name     string `json:"name" comment:"道具类型"`
+	Operator string `json:"operator" comment:""`
 	common.ControlBy
 }
 

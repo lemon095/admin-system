@@ -39,6 +39,7 @@ type ItemInsertReq struct {
 	Icon     string        `json:"icon" comment:"图片地址"`
 	Extend   *string       `json:"extend" comment:"扩展属性"`
 	IsEnable global.Status `json:"isEnable" comment:"状态(0:启用 1:禁用)"`
+	Operator string        `json:"operator" comment:""`
 	common.ControlBy
 }
 
@@ -65,6 +66,7 @@ type ItemUpdateReq struct {
 	Icon     string        `json:"icon" comment:"图片地址"`
 	Extend   *string       `json:"extend" comment:"扩展属性"`
 	IsEnable global.Status `json:"isEnable" comment:"状态(0:启用 1:禁用)"`
+	Operator string        `json:"operator" comment:""`
 	common.ControlBy
 }
 

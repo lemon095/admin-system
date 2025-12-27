@@ -112,7 +112,7 @@ func (e ItemType) Insert(c *gin.Context) {
 		return
 	}
 	// 设置创建人
-	req.SetOperator(user.GetUserName(c))
+	req.Operator = user.GetUserName(c)
 
 	err = s.Insert(&req)
 	if err != nil {
@@ -148,7 +148,7 @@ func (e ItemType) Update(c *gin.Context) {
 		e.Error(500, err, err.Error())
 		return
 	}
-	req.SetOperator(user.GetUserName(c))
+	req.Operator = user.GetUserName(c)
 	p := actions.GetPermissionFromContext(c)
 
 	err = s.Update(&req, p)
@@ -181,7 +181,7 @@ func (e ItemType) Delete(c *gin.Context) {
 		return
 	}
 
-	// req.SetOperator(user.GetUserName(c))
+	// req.Operator = user.GetUserName(c)
 	p := actions.GetPermissionFromContext(c)
 
 	err = s.Remove(&req, p)
