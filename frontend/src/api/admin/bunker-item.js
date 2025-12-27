@@ -36,6 +36,13 @@ export function updateItem(data) {
     })
 }
 
+export function updateItemStatus(id) {
+    return request({
+        url: '/api/v1/item/status/'+id,
+        method: 'put'
+    })
+}
+
 // 删除Item
 export function delItem(data) {
     return request({

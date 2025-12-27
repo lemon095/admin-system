@@ -54,7 +54,7 @@ func (e *SysConfig) Insert(c *dto.SysConfigControl) error {
 	var err error
 	var data models.SysConfig
 	c.Generate(&data)
-	err = e.Orm.Create(&data).Error
+	err = e.Orm.Omit("operator").Create(&data).Error
 	if err != nil {
 		e.Log.Errorf("Service InsertSysConfig error:%s", err)
 		return err

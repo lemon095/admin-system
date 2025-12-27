@@ -59,7 +59,7 @@ func (e *SysPost) Insert(c *dto.SysPostInsertReq) error {
 	var err error
 	var data models.SysPost
 	c.Generate(&data)
-	err = e.Orm.Create(&data).Error
+	err = e.Orm.Omit("operator").Create(&data).Error
 	if err != nil {
 		e.Log.Errorf("db error:%s", err)
 		return err

@@ -16,7 +16,7 @@ type ConfigureMonster struct {
 }
 
 func (ConfigureMonster) TableName() string {
-	return "configure_monster"
+	return "bunker_monster"
 }
 
 func (e *ConfigureMonster) Generate() models.ActiveRecord {

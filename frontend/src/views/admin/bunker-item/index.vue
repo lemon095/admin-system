@@ -70,8 +70,8 @@
                                                  :show-overflow-tooltip="true"/>
                                                  <el-table-column label="状态" align="center" prop="isEnable" :show-overflow-tooltip="true">
                                                     <template #default="scope">
-                                                        <el-tag v-if="scope.row.isEnable === 1" type="success">启用</el-tag>
-                                                        <el-tag v-else type="warning" effect="dark">禁用</el-tag>
+                                                        <el-button v-if="scope.row.isEnable === 0" type="success" @click="updateStatus(scope.row.id)">启用</el-button>
+                                                        <el-button v-else type="danger" @click="updateStatus(scope.row.id)">禁用</el-button>
                                                     </template>
                                                 </el-table-column>
                                                  <el-table-column sortable align="left" label="创建时间" prop="createdAt" width="180">
@@ -172,7 +172,7 @@
 </template>
 
 <script>
-    import {addItem, delItem, getItem, listItem, updateItem} from '@/api/admin/bunker-item'
+    import {addItem, delItem, getItem, listItem, updateItem, updateItemStatus } from '@/api/admin/bunker-item'
     import { listItemType } from '@/api/admin/bunker-item-type'
     import { formatDate } from '@/utils/index'
     
@@ -241,6 +241,14 @@
                 } catch (err) {
                     this.msgError('获取类型失败')
                 }
+            },
+            updateStatus(id) {
+                updateItemStatus(id).then(response => {
+                    if (response.code === 200) {
+                        this.msgSuccess(response.msg)
+                        this.getList()
+                    }
+                })
             },
             /** 查询参数列表 */
             getList() {

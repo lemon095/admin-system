@@ -7,7 +7,7 @@ import (
 type ControlBy struct {
 	CreateBy int    `json:"createBy" gorm:"-"`
 	UpdateBy int    `json:"updateBy" gorm:"-"`
-	Operator string `gorm:"->;column:operator" json:"operator"`
+	Operator string `gorm:"column:operator" json:"operator"`
 }
 
 // SetCreateBy 设置创建人id

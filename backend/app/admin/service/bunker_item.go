@@ -99,6 +99,19 @@ func (e *Item) Update(c *dto.ItemUpdateReq, p *actions.DataPermission) error {
 	return nil
 }
 
+func (e *Item) UpdateStatus(c *dto.ItemUpdateReq, p *actions.DataPermission) error {
+	var err error
+	db := e.Orm.Exec("UPDATE bunker_item SET is_enable = NOT is_enable, operator = ? WHERE id = ?", c.Operator, c.Id)
+	if err = db.Error; err != nil {
+		e.Log.Errorf("ItemService Save error:%s \r\n", err)
+		return err
+	}
+	if db.RowsAffected == 0 {
+		return errors.New("无权更新该数据")
+	}
+	return nil
+}
+
 // Remove 删除Item
 func (e *Item) Remove(d *dto.ItemDeleteReq, p *actions.DataPermission) error {
 	var data models.Item

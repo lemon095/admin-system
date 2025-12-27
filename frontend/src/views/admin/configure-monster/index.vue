@@ -112,16 +112,16 @@
         <el-dialog :title="title" :visible.sync="open" width="500px">
           <el-form ref="form" :model="form" :rules="rules" label-width="80px">
 
-            <el-form-item label="" prop="name">
+            <el-form-item label="怪物名称" prop="name">
               <el-input
                 v-model="form.name"
                 placeholder=""
               />
             </el-form-item>
-            <el-form-item label="" prop="value">
+            <el-form-item label="怪物属性" prop="value">
               <el-input
                 v-model="form.value"
-                placeholder=""
+                placeholder="请输入JSON格式"
               />
             </el-form-item>
           </el-form>
@@ -232,7 +232,7 @@ export default {
     handleAdd() {
       this.reset()
       this.open = true
-      this.title = '添加ConfigureMonster'
+      this.title = '添加怪物配置'
       this.isEdit = false
     },
     // 多选框选中数据

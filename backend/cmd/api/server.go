@@ -19,7 +19,6 @@ import (
 	"github.com/pkg/errors"
 	"github.com/spf13/cobra"
 
-	"go-admin/app/admin/models"
 	"go-admin/app/admin/router"
 	"go-admin/common/global"
 	common "go-admin/common/middleware"
@@ -67,11 +66,11 @@ func setup() {
 	storage.Setup()
 
 	//注册监听函数
-	queue := sdk.Runtime.GetMemoryQueue("")
-	queue.Register(global.LoginLog, models.SaveLoginLog)
-	queue.Register(global.OperateLog, models.SaveOperaLog)
-	queue.Register(global.ApiCheck, models.SaveSysApi)
-	go queue.Run()
+	//queue := sdk.Runtime.GetMemoryQueue("")
+	//queue.Register(global.LoginLog, models.SaveLoginLog)
+	//queue.Register(global.OperateLog, models.SaveOperaLog)
+	//queue.Register(global.ApiCheck, models.SaveSysApi)
+	//go queue.Run()
 
 	usageStr := `starting api server...`
 	log.Info(usageStr)

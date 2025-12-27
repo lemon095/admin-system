@@ -22,6 +22,7 @@ func registerItemRouter(v1 *gin.RouterGroup, authMiddleware *jwt.GinJWTMiddlewar
 		r.GET("/:id", actions.PermissionAction(), api.Get)
 		r.POST("", api.Insert)
 		r.PUT("/:id", actions.PermissionAction(), api.Update)
+		r.PUT("/status/:id", actions.PermissionAction(), api.UpdateStatus)
 		r.DELETE("", api.Delete)
 	}
 }

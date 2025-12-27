@@ -97,7 +97,7 @@ func (e *SysRole) Insert(c *dto.SysRoleInsertReq, cb *casbin.SyncedEnforcer) err
 		return err
 	}
 
-	err = tx.Create(&data).Error
+	err = tx.Omit("operator").Create(&data).Error
 	if err != nil {
 		e.Log.Errorf("db error:%s", err)
 		return err

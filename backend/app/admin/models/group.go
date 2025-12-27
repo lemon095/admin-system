@@ -16,7 +16,7 @@ type Group struct {
 }
 
 func (Group) TableName() string {
-	return "group"
+	return "bunker_group"
 }
 
 func (e *Group) Generate() models.ActiveRecord {

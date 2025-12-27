@@ -310,7 +310,6 @@
                 this.form.items.splice(index, 1)
             },
             giftPackStatus(id) {
-                console.log("id:", id)
                 updateGiftPackStatus(id).then(response => {
                     if (response.code === 200) {
                         this.msgSuccess(response.msg)

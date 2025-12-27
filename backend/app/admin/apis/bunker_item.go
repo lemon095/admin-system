@@ -160,6 +160,30 @@ func (e Item) Update(c *gin.Context) {
 	e.OK(req.GetId(), "修改成功")
 }
 
+func (e Item) UpdateStatus(c *gin.Context) {
+	req := dto.ItemUpdateReq{}
+	s := service.Item{}
+	err := e.MakeContext(c).
+		MakeOrm().
+		Bind(&req).
+		MakeService(&s.Service).
+		Errors
+	if err != nil {
+		e.Logger.Error(err)
+		e.Error(500, err, err.Error())
+		return
+	}
+	req.SetOperator(user.GetUserName(c))
+	p := actions.GetPermissionFromContext(c)
+
+	err = s.UpdateStatus(&req, p)
+	if err != nil {
+		e.Error(500, err, fmt.Sprintf("修改道具表失败，\r\n失败信息 %s", err.Error()))
+		return
+	}
+	e.OK(req.GetId(), "修改成功")
+}
+
 // Delete 删除道具表
 // @Summary 删除道具表
 // @Description 删除道具表

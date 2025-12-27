@@ -58,6 +58,7 @@ func (s *ConfigureMonsterUpdateReq) Generate(model *models.ConfigureMonster) {
 	}
 	model.Name = s.Name
 	model.Value = s.Value
+	model.Operator = s.Operator
 }
 
 func (s *ConfigureMonsterUpdateReq) GetId() interface{} {

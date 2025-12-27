@@ -63,7 +63,7 @@ func (e *SysDictType) Insert(c *dto.SysDictTypeInsertReq) error {
 	if count > 0 {
 		return fmt.Errorf("当前字典类型[%s]已经存在！", data.DictType)
 	}
-	err = e.Orm.Create(&data).Error
+	err = e.Orm.Omit("operator").Create(&data).Error
 	if err != nil {
 		e.Log.Errorf("db error: %s", err)
 		return err
