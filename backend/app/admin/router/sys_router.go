@@ -24,9 +24,9 @@ func InitSysRouter(r *gin.Engine, authMiddleware *jwt.GinJWTMiddleware) *gin.Rou
 	// 静态文件
 	sysStaticFileRouter(g)
 	// swagger；注意：生产环境可以注释掉
-	if config.ApplicationConfig.Mode != "prod" {
-		sysSwaggerRouter(g)
-	}
+	//if config.ApplicationConfig.Mode != "prod" {
+	//	sysSwaggerRouter(g)
+	//}
 	// 需要认证
 	sysCheckRoleRouterInit(g, authMiddleware)
 	return g
@@ -38,10 +38,10 @@ func sysBaseRouter(r *gin.RouterGroup) {
 	//go ws.WebsocketManager.SendService()
 	//go ws.WebsocketManager.SendAllService()
 
-	if config.ApplicationConfig.Mode != "prod" {
-		r.GET("/", apis.GoAdmin)
-	}
-	r.GET("/info", handler.Ping)
+	//if config.ApplicationConfig.Mode != "prod" {
+	//	r.GET("/", apis.GoAdmin)
+	//}
+	//r.GET("/info", handler.Ping)
 }
 
 func sysStaticFileRouter(r *gin.RouterGroup) {

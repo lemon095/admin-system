@@ -25,7 +25,6 @@ func (e *ConfigureMonster) GetPage(c *dto.ConfigureMonsterGetPageReq, p *actions
 		Scopes(
 			cDto.MakeCondition(c.GetNeedSearch()),
 			cDto.Paginate(c.GetPageSize(), c.GetPageIndex()),
-			actions.Permission(data.TableName(), p),
 		).
 		Find(list).Limit(-1).Offset(-1).
 		Count(count).Error
@@ -40,11 +39,7 @@ func (e *ConfigureMonster) GetPage(c *dto.ConfigureMonsterGetPageReq, p *actions
 func (e *ConfigureMonster) Get(d *dto.ConfigureMonsterGetReq, p *actions.DataPermission, model *models.ConfigureMonster) error {
 	var data models.ConfigureMonster
 
-	err := e.Orm.Model(&data).
-		Scopes(
-			actions.Permission(data.TableName(), p),
-		).
-		First(model, d.GetId()).Error
+	err := e.Orm.Model(&data).First(model, d.GetId()).Error
 	if err != nil && errors.Is(err, gorm.ErrRecordNotFound) {
 		err = errors.New("查看对象不存在或无权查看")
 		e.Log.Errorf("Service GetConfigureMonster error:%s \r\n", err)
@@ -74,9 +69,7 @@ func (e *ConfigureMonster) Insert(c *dto.ConfigureMonsterInsertReq) error {
 func (e *ConfigureMonster) Update(c *dto.ConfigureMonsterUpdateReq, p *actions.DataPermission) error {
 	var err error
 	var data = models.ConfigureMonster{}
-	e.Orm.Scopes(
-		actions.Permission(data.TableName(), p),
-	).First(&data, c.GetId())
+	e.Orm.First(&data, c.GetId())
 	c.Generate(&data)
 
 	db := e.Orm.Save(&data)
@@ -94,10 +87,7 @@ func (e *ConfigureMonster) Update(c *dto.ConfigureMonsterUpdateReq, p *actions.D
 func (e *ConfigureMonster) Remove(d *dto.ConfigureMonsterDeleteReq, p *actions.DataPermission) error {
 	var data models.ConfigureMonster
 
-	db := e.Orm.Model(&data).
-		Scopes(
-			actions.Permission(data.TableName(), p),
-		).Delete(&data, d.GetId())
+	db := e.Orm.Model(&data).Delete(&data, d.GetId())
 	if err := db.Error; err != nil {
 		e.Log.Errorf("Service RemoveConfigureMonster error:%s \r\n", err)
 		return err

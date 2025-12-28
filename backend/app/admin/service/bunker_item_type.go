@@ -25,7 +25,6 @@ func (e *ItemType) GetPage(c *dto.ItemTypeGetPageReq, p *actions.DataPermission,
 		Scopes(
 			cDto.MakeCondition(c.GetNeedSearch()),
 			cDto.Paginate(c.GetPageSize(), c.GetPageIndex()),
-			actions.Permission(data.TableName(), p),
 		).
 		Find(list).Limit(-1).Offset(-1).
 		Count(count).Error
@@ -40,11 +39,7 @@ func (e *ItemType) GetPage(c *dto.ItemTypeGetPageReq, p *actions.DataPermission,
 func (e *ItemType) Get(d *dto.ItemTypeGetReq, p *actions.DataPermission, model *models.ItemType) error {
 	var data models.ItemType
 
-	err := e.Orm.Model(&data).
-		Scopes(
-			actions.Permission(data.TableName(), p),
-		).
-		First(model, d.GetId()).Error
+	err := e.Orm.Model(&data).First(model, d.GetId()).Error
 	if err != nil && errors.Is(err, gorm.ErrRecordNotFound) {
 		err = errors.New("查看对象不存在或无权查看")
 		e.Log.Errorf("Service GetItemType error:%s \r\n", err)
@@ -91,10 +86,7 @@ func (e *ItemType) Update(c *dto.ItemTypeUpdateReq, p *actions.DataPermission) e
 func (e *ItemType) Remove(d *dto.ItemTypeDeleteReq, p *actions.DataPermission) error {
 	var data models.ItemType
 
-	db := e.Orm.Model(&data).
-		Scopes(
-			actions.Permission(data.TableName(), p),
-		).Delete(&data, d.GetId())
+	db := e.Orm.Model(&data).Delete(&data, d.GetId())
 	if err := db.Error; err != nil {
 		e.Log.Errorf("Service RemoveItemType error:%s \r\n", err)
 		return err

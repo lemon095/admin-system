@@ -13,6 +13,14 @@ type GiftpackRedeemsGetPageReq struct {
 	GiftpackRedeemsOrder
 }
 
+type GiftpackRedeemsGetPageResp struct {
+	RedeemCode string `json:"redeemCode" gorm:"redeem_code"`
+	Nickname   string `json:"nickname" gorm:"nickname"`
+	Gender     string `json:"gender" gorm:"gender"`
+	CreatedAt  string `json:"createdAt" gorm:"createdAt"`
+	Avatar     string `json:"avatar" gorm:"avatar"`
+}
+
 type GiftpackRedeemsOrder struct {
 	Id              string `form:"idOrder"  search:"type:order;column:id;table:bunker_giftpack_redeems"`
 	RedeemerUnionId string `form:"redeemerUnionIdOrder"  search:"type:order;column:redeemer_union_id;table:bunker_giftpack_redeems"`

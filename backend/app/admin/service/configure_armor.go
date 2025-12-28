@@ -25,7 +25,6 @@ func (e *ConfigureArmor) GetPage(c *dto.ConfigureArmorGetPageReq, p *actions.Dat
 		Scopes(
 			cDto.MakeCondition(c.GetNeedSearch()),
 			cDto.Paginate(c.GetPageSize(), c.GetPageIndex()),
-			actions.Permission(data.TableName(), p),
 		).
 		Find(list).Limit(-1).Offset(-1).
 		Count(count).Error
@@ -40,11 +39,7 @@ func (e *ConfigureArmor) GetPage(c *dto.ConfigureArmorGetPageReq, p *actions.Dat
 func (e *ConfigureArmor) Get(d *dto.ConfigureArmorGetReq, p *actions.DataPermission, model *models.ConfigureArmor) error {
 	var data models.ConfigureArmor
 
-	err := e.Orm.Model(&data).
-		Scopes(
-			actions.Permission(data.TableName(), p),
-		).
-		First(model, d.GetId()).Error
+	err := e.Orm.Model(&data).First(model, d.GetId()).Error
 	if err != nil && errors.Is(err, gorm.ErrRecordNotFound) {
 		err = errors.New("查看对象不存在或无权查看")
 		e.Log.Errorf("Service GetConfigureArmor error:%s \r\n", err)
@@ -74,9 +69,7 @@ func (e *ConfigureArmor) Insert(c *dto.ConfigureArmorInsertReq) error {
 func (e *ConfigureArmor) Update(c *dto.ConfigureArmorUpdateReq, p *actions.DataPermission) error {
 	var err error
 	var data = models.ConfigureArmor{}
-	e.Orm.Scopes(
-		actions.Permission(data.TableName(), p),
-	).First(&data, c.GetId())
+	e.Orm.First(&data, c.GetId())
 	c.Generate(&data)
 
 	db := e.Orm.Save(&data)

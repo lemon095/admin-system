@@ -25,7 +25,6 @@ func (e *Group) GetPage(c *dto.GroupGetPageReq, p *actions.DataPermission, list 
 		Scopes(
 			cDto.MakeCondition(c.GetNeedSearch()),
 			cDto.Paginate(c.GetPageSize(), c.GetPageIndex()),
-			actions.Permission(data.TableName(), p),
 		).
 		Find(list).Limit(-1).Offset(-1).
 		Count(count).Error
@@ -40,11 +39,7 @@ func (e *Group) GetPage(c *dto.GroupGetPageReq, p *actions.DataPermission, list 
 func (e *Group) Get(d *dto.GroupGetReq, p *actions.DataPermission, model *models.Group) error {
 	var data models.Group
 
-	err := e.Orm.Model(&data).
-		Scopes(
-			actions.Permission(data.TableName(), p),
-		).
-		First(model, d.GetId()).Error
+	err := e.Orm.Model(&data).First(model, d.GetId()).Error
 	if err != nil && errors.Is(err, gorm.ErrRecordNotFound) {
 		err = errors.New("查看对象不存在或无权查看")
 		e.Log.Errorf("Service GetGroup error:%s \r\n", err)
@@ -74,9 +69,7 @@ func (e *Group) Insert(c *dto.GroupInsertReq) error {
 func (e *Group) Update(c *dto.GroupUpdateReq, p *actions.DataPermission) error {
 	var err error
 	var data = models.Group{}
-	e.Orm.Scopes(
-		actions.Permission(data.TableName(), p),
-	).First(&data, c.GetId())
+	e.Orm.First(&data, c.GetId())
 	c.Generate(&data)
 
 	db := e.Orm.Save(&data)
@@ -94,10 +87,7 @@ func (e *Group) Update(c *dto.GroupUpdateReq, p *actions.DataPermission) error {
 func (e *Group) Remove(d *dto.GroupDeleteReq, p *actions.DataPermission) error {
 	var data models.Group
 
-	db := e.Orm.Model(&data).
-		Scopes(
-			actions.Permission(data.TableName(), p),
-		).Delete(&data, d.GetId())
+	db := e.Orm.Model(&data).Delete(&data, d.GetId())
 	if err := db.Error; err != nil {
 		e.Log.Errorf("Service RemoveGroup error:%s \r\n", err)
 		return err

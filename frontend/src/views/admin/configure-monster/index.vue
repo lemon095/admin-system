@@ -122,6 +122,8 @@
               <el-input
                 v-model="form.value"
                 placeholder="请输入JSON格式"
+                type="textarea"
+                :rows="4"
               />
             </el-form-item>
           </el-form>
