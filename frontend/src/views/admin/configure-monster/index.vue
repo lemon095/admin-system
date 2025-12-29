@@ -188,7 +188,9 @@ export default {
       },
       formatDate,
       // 表单校验
-      rules: {}
+      rules: {
+        name: [{ required: true, message: '请输入名称', trigger: 'blur' }]
+      }
     }
   },
   created() {
