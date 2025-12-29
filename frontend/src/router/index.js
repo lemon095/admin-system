@@ -73,7 +73,7 @@ export const constantRoutes = [
   {
     path: '/',
     component: Layout,
-    redirect: '/admin/bunker-gift-pack',
+    redirect: '/dashboard',
     children: [
       {
         path: 'dashboard',
