@@ -163,12 +163,12 @@ func (e *SysRole) Update(c *dto.SysRoleUpdateReq, cb *casbin.SyncedEnforcer) err
 		return errors.New("无权更新该数据")
 	}
 
-	// 清除 sys_casbin_rule 权限表里 当前角色的所有记录
-	_, err = cb.RemoveFilteredPolicy(0, model.RoleKey)
-	if err != nil {
-		e.Log.Errorf("delete policy error:%s", err)
-		return err
-	}
+	// TODO 清除 sys_casbin_rule 权限表里 当前角色的所有记录
+	//_, err = cb.RemoveFilteredPolicy(0, model.RoleKey)
+	//if err != nil {
+	//	e.Log.Errorf("delete policy error:%s", err)
+	//	return err
+	//}
 	mp := make(map[string]interface{}, 0)
 	polices := make([][]string, 0)
 	for _, menu := range mlist {
