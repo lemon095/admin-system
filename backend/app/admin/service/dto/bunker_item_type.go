@@ -35,6 +35,7 @@ func (s *ItemTypeInsertReq) Generate(model *models.ItemType) {
 		model.Model = common.Model{Id: s.Id}
 	}
 	model.Name = s.Name
+	model.Operator = s.Operator
 }
 
 func (s *ItemTypeInsertReq) GetId() interface{} {
