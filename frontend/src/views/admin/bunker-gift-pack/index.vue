@@ -99,7 +99,11 @@
                                         {{ scope.row.giftNum - scope.row.redeemedNum }}
                                     </template>
                                 </el-table-column>
-                                <el-table-column label="详情" align="center" prop="giftDesc" :show-overflow-tooltip="true"/>
+                                <el-table-column label="详情" align="center" prop="giftDesc" :show-overflow-tooltip="true">
+                                    <template #default="scope">
+                                        <el-button @click="detail(scope.row.id)">详情</el-button>
+                                    </template>
+                                </el-table-column>
                             <el-table-column label="状态" align="center" prop="isEnable" :show-overflow-tooltip="true">
                                 <template #default="scope">
                                     <el-button v-if="scope.row.isEnable === 0" type="success" @click="giftPackStatus(scope.row.id)">启用</el-button>
@@ -152,7 +156,7 @@
 
                 <!-- 添加或修改对话框 -->
                 <el-dialog :title="title" :visible.sync="open" width="800px">
-                    <el-form ref="form" :model="form" :rules="rules" label-width="80px">
+                    <el-form ref="form" :model="form" :rules="rules" :disabled="form.mode === 'view'" label-width="80px">
                         <h3>创建礼包兑换码</h3>
                                     <el-form-item label="礼包名称" prop="giftName">
                                         <el-input v-model="form.giftName" placeholder="礼包名称" style="width: 30%;"/>
@@ -173,36 +177,41 @@
                                     <h3>兑换码配置</h3>
                                     <el-form-item prop="giftNum">
                                         <template #label><span>数量：</span></template>
-                                        <el-input v-model.number="form.giftNum" placeholder="礼包码配置数量" style="width: 200px; margin-right: 20px;"/>
+                                        <el-input-number v-model.number="form.giftNum" :min="1" placeholder="礼包码配置数量" style="width: 200px; margin-right: 20px;"/>
                                         <span style="margin-right: 8px;">单用户兑换次数：</span>
-                                        <el-input v-model.number="form.giftLimit" placeholder="单用户兑换次数" style="width: 200px;"/>
+                                        <el-input-number v-model.number="form.giftLimit" :min="1" placeholder="单用户兑换次数" style="width: 200px;"/>
                                     </el-form-item>
-                                    <el-form-item label="兑换码" prop="redeemCode">
+                                    <el-form-item label="兑换码" prop="redeemCode" v-if="form.mode === 'view'">
                                         <el-input v-model="form.redeemCode" placeholder="兑换码" style="width: 200px;"/>
                                     </el-form-item>
                                     <h3>礼包配置</h3>
                                     <el-form-item prop="goldCoinNum" label-width="100px">
                                         <template #label><span>金币数量：</span></template>
-                                        <el-input v-model.number="form.goldCoinNum" placeholder="金币数量" style="width: 200px; margin-right: 20px;"/>
+                                        <el-input-number v-model.number="form.goldCoinNum" placeholder="金币数量" style="width: 200px; margin-right: 20px;margin-left: 5px;"/>
                                         <span style="margin-right: 8px;">银币数量：</span>
-                                        <el-input v-model.number="form.silverCoinNum" placeholder="银币数量"
-                                                      style="width: 200px;"/>
+                                        <el-input-number v-model.number="form.silverCoinNum" placeholder="银币数量" style="width: 200px;margin-right: 1px;margin-left: 5px;"/>
                                     </el-form-item>
                                     <el-form-item label="道具" prop="item">
                                         <el-form-item
                                             v-for="(item, index) in form.items"
                                             :key="index"
                                         >
-                                            <el-select v-model="item.type" placeholder="请选择道具类型" style="width: 150px; margin-right: 10px;">
+                                            <!-- <el-select v-model="item.type" placeholder="请选择道具类型" style="width: 150px; margin-right: 10px;">
                                                 <el-option v-for="option in typeOptions" :key="option.id" :label="option.name" :value="option.id" />
-                                            </el-select>
-                                            <span style="margin-right: 8px;">数量：</span>
+                                            </el-select> -->
+                                            <el-cascader
+                                                v-model="item.value"
+                                                :options="typeOptions"
+                                                placeholder="请选择道具类型"
+                                                clearable
+                                            />
+                                            <span style="margin-right: 1px;margin-left: 10px;">数量：</span>
                                             <el-input-number v-model="item.num" :min="1" :max="100" style="width: 100px; margin-right: 10px;"/>
-                                            <el-button type="danger" link @click="removeItem(index)" v-if="form.items.length > 1">
+                                            <el-button type="danger" link @click="removeItem(index)" v-if="form.items.length > 1 && form.mode !== 'view'">
                                                 删除
                                             </el-button>
                                         </el-form-item>
-                                        <el-button type="primary" link @click="addItem">添加道具</el-button>
+                                        <el-button type="primary" link @click="addItem" v-if="form.mode !== 'view'">添加道具</el-button>
                                     </el-form-item>
                     </el-form>
                     <div slot="footer" class="dialog-footer">
@@ -217,8 +226,9 @@
 
 <script>
     import {addGiftPack, delGiftPack, getGiftPack, listGiftPack, updateGiftPack, updateGiftPackStatus} from '@/api/admin/bunker-gift-pack'
-    import { listItemType } from '@/api/admin/bunker-item-type'
+    import { loadItemOptions } from '@/api/admin/bunker-item'
     import { formatDate } from '@/utils/index'
+    import { numberValidator } from '@/utils/validate'
 
     export default {
         name: 'GiftPack',
@@ -274,12 +284,14 @@
                     isEnable: null,
                 },
                 // 表单参数
-                form: {
-                    item: [{ type: null, num: 1 }]
-                },
+                form: {},
                 formatDate,
                 // 表单校验
-                rules: {}
+                rules: {
+                    giftName: [{ required: true, message: '请输入名称', trigger: 'blur' }],
+                    giftNum: [{ validator: numberValidator, trigger: 'blur'}],
+                    giftLimit: [{ validator: numberValidator, trigger: 'blur'}],
+                }
         }
         },
         created() {
@@ -292,9 +304,9 @@
                     return
                 }
                 try {
-                    const response = await listItemType()
+                    const response = await loadItemOptions()
                     if (response.code === 200) {
-                        this.typeOptions = response.data.list
+                        this.typeOptions = response.data
                         this.loaded = true
                     } else {
                         this.msgError(response.msg)
@@ -304,7 +316,7 @@
                 }
             },
             addItem() {
-                this.form.items.push({ type: null, num: 1 })
+                this.form.items.push({ value: [], num: 1 })
             },
             removeItem(index) {
                 this.form.items.splice(index, 1)
@@ -335,18 +347,18 @@
             // 表单重置
             reset() {
                 this.form = {
-                
+                mode: "view",
                 id: undefined,
                 giftName: undefined,
-                giftNum: undefined,
-                giftLimit: undefined,
+                giftNum: 1,
+                giftLimit: 1,
                 redeemCode: undefined,
                 giftDesc: undefined,
                 goldCoinNum: undefined,
                 silverCoinNum: undefined,
                 startAt: undefined,
                 endAt: undefined,
-                items: [{ type: null, num: 1 }]
+                items: [{ value: [], num: 1 }]
             }
                 this.resetForm('form')
             },
@@ -375,6 +387,7 @@
                 this.open = true
                 this.title = '添加兑换码管理'
                 this.isEdit = false
+                this.form.mode = "add"
             },
             // 多选框选中数据
             handleSelectionChange(selection) {
@@ -389,15 +402,30 @@
                 row.id || this.ids
                 getGiftPack(id).then(response => {
                     this.form = response.data
+                    this.form.mode = 'edit'
                     this.open = true
                     this.title = '修改兑换码管理'
                     this.isEdit = true
+                })
+            },
+            detail(id) {
+                this.reset()
+                getGiftPack(id).then(response => {
+                    this.form = response.data
+                    this.open = true
+                    this.form.mode = 'view'
+                    this.title = '兑换码详情'
+                    this.form.items = JSON.parse(this.form.item)
                 })
             },
             /** 提交按钮 */
             submitForm: function () {
                 this.$refs['form'].validate(valid => {
                     if (valid) {
+                        if (this.form.mode == "view") {
+                            this.open = false
+                            return
+                        }
                         if (this.form.id !== undefined) {
                             updateGiftPack(this.form).then(response => {
                                 if (response.code === 200) {

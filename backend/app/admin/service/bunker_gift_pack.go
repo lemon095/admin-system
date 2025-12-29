@@ -1,7 +1,9 @@
 package service
 
 import (
+	"crypto/rand"
 	"errors"
+	"math/big"
 
 	"github.com/go-admin-team/go-admin-core/sdk/service"
 	"gorm.io/gorm"
@@ -65,6 +67,7 @@ func (e *GiftPack) Insert(c *dto.GiftPackInsertReq) error {
 	var err error
 	var data models.GiftPack
 	c.Generate(&data)
+	data.RedeemCode = Random12StringSecure()
 	err = e.Orm.Create(&data).Error
 	if err != nil {
 		e.Log.Errorf("GiftPackService Insert error:%s \r\n", err)
@@ -117,4 +120,22 @@ func (e *GiftPack) Remove(d *dto.GiftPackDeleteReq, p *actions.DataPermission) e
 		return errors.New("无权删除该数据")
 	}
 	return nil
+}
+
+func Random12StringSecure() string {
+	firstChars := "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
+	otherChars := "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"
+
+	result := make([]byte, 12)
+
+	// 首字母大写
+	n, _ := rand.Int(rand.Reader, big.NewInt(int64(len(firstChars))))
+	result[0] = firstChars[n.Int64()]
+
+	for i := 1; i < 12; i++ {
+		n, _ = rand.Int(rand.Reader, big.NewInt(int64(len(otherChars))))
+		result[i] = otherChars[n.Int64()]
+	}
+
+	return string(result)
 }

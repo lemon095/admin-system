@@ -85,3 +85,13 @@ export function isArray(arg) {
   }
   return Array.isArray(arg)
 }
+
+export function numberValidator(rule, value, callback) {
+  if (value === null || value === undefined || value === '') {
+      callback(new Error('不能为空'))
+  } else if (isNaN(value) || value <= 0) {
+      callback(new Error('必须大于 0'))
+  } else {
+      callback()
+  }
+}

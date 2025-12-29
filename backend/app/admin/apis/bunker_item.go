@@ -57,6 +57,27 @@ func (e Item) GetPage(c *gin.Context) {
 	e.PageOK(list, int(count), req.GetPageIndex(), req.GetPageSize(), "查询成功")
 }
 
+func (e Item) GetOption(c *gin.Context) {
+	s := service.Item{}
+	err := e.MakeContext(c).
+		MakeOrm().
+		MakeService(&s.Service).
+		Errors
+	if err != nil {
+		e.Logger.Error(err)
+		e.Error(500, err, err.Error())
+		return
+	}
+
+	list, err := s.GetOption()
+	if err != nil {
+		e.Error(500, err, fmt.Sprintf("获取道具表失败，\r\n失败信息 %s", err.Error()))
+		return
+	}
+
+	e.OK(list, "查询成功")
+}
+
 // Get 获取道具表
 // @Summary 获取道具表
 // @Description 获取道具表

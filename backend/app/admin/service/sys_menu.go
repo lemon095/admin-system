@@ -352,6 +352,7 @@ func menuDistinct(menuList []models.SysMenu) (result []models.SysMenu) {
 	return result
 }
 
+// TODO 递归查询
 func recursiveSetMenu(orm *gorm.DB, mIds []int, menus *[]models.SysMenu) error {
 	if len(mIds) == 0 || menus == nil {
 		return nil
@@ -376,8 +377,8 @@ func recursiveSetMenu(orm *gorm.DB, mIds []int, menus *[]models.SysMenu) error {
 }
 
 // SetMenuRole 获取左侧菜单树使用
-func (e *SysMenu) SetMenuRole(roleName string) (m []models.SysMenu, err error) {
-	menus, err := e.getByRoleName(roleName)
+func (e *SysMenu) SetMenuRole(roleName string, roleID int64) (m []models.SysMenu, err error) {
+	menus, err := e.getByRole(roleName, roleID)
 	m = make([]models.SysMenu, 0)
 	for i := 0; i < len(menus); i++ {
 		if menus[i].ParentId != 0 {
@@ -389,8 +390,7 @@ func (e *SysMenu) SetMenuRole(roleName string) (m []models.SysMenu, err error) {
 	return
 }
 
-func (e *SysMenu) getByRoleName(roleName string) ([]models.SysMenu, error) {
-	var role models.SysRole
+func (e *SysMenu) getByRole(roleName string, roleID int64) ([]models.SysMenu, error) {
 	var err error
 	data := make([]models.SysMenu, 0)
 
@@ -401,12 +401,14 @@ func (e *SysMenu) getByRoleName(roleName string) ([]models.SysMenu, error) {
 			Error
 		err = errors.WithStack(err)
 	} else {
-		role.RoleKey = roleName
-		err = e.Orm.Model(&role).Where("role_key = ? ", roleName).Preload("SysMenu").First(&role).Error
+		var sysMenus []models.SysMenu
+		if err = e.Orm.Table("sys_role_menu").Select("menu_id").Where("sys_role_menu.role_id = ?", roleID).Find(&sysMenus).Error; err != nil {
+			return nil, err
+		}
 
-		if role.SysMenu != nil {
+		if len(sysMenus) > 0 {
 			mIds := make([]int, 0)
-			for _, menu := range *role.SysMenu {
+			for _, menu := range sysMenus {
 				mIds = append(mIds, menu.MenuId)
 			}
 			if err := recursiveSetMenu(e.Orm, mIds, &data); err != nil {

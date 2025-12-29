@@ -88,6 +88,15 @@
                              v-permisaction="['admin:item:edit']"
                              size="mini"
                              type="text"
+                             icon="el-icon-view"
+                             @click="detail(scope.row.id)"
+                           >详情
+                           </el-button>
+                           <el-button
+                             slot="reference"
+                             v-permisaction="['admin:item:edit']"
+                             size="mini"
+                             type="text"
                              icon="el-icon-edit"
                              @click="handleUpdate(scope.row)"
                            >修改
@@ -121,7 +130,7 @@
 
                 <!-- 添加或修改对话框 -->
                 <el-dialog :title="title" :visible.sync="open" width="500px">
-                    <el-form ref="form" :model="form" :rules="rules" label-width="80px">
+                    <el-form ref="form" :model="form" :rules="rules" :disabled="form.mode === 'view'" label-width="80px">
                         
                                     <!-- <el-form-item label="道具id" prop="itemId">
                                         <el-input v-model.number="form.itemId" placeholder="道具id"
@@ -153,7 +162,7 @@
                                                       />
                                     </el-form-item>
                                     <el-form-item label="扩展属性" prop="extend">
-                                        <el-input v-model="form.extend" placeholder="扩展属性"
+                                        <el-input v-model="form.extend" placeholder="扩展属性" type="textarea" :rows="4"
                                                       />
                                     </el-form-item>
                                     <el-form-item label="状态" prop="isEnable">
@@ -218,7 +227,11 @@
                 },
                 formatDate,
                 // 表单校验
-                rules: {type:  [ {required: true, message: '道具类型不能为空', trigger: 'blur'} ],
+                rules: {
+                    type:  [ {required: true, message: '道具类型不能为空', trigger: 'blur'} ],
+                    name: [{ required: true, message: '请输入名称', trigger: 'blur' }],
+                    desc: [{ required: true, message: '请输入描述', trigger: 'blur' }],
+                    icon: [{ required: true, message: '请输入图标', trigger: 'blur' }],
                 }
         }
         },
@@ -268,7 +281,7 @@
             // 表单重置
             reset() {
                 this.form = {
-                
+                mode: "view",
                 id: undefined,
                 itemId: undefined,
                 type: undefined,
@@ -305,6 +318,7 @@
                 this.open = true
                 this.title = '添加道具表'
                 this.isEdit = false
+                this.form.mode = "add"
             },
             // 多选框选中数据
             handleSelectionChange(selection) {
@@ -319,15 +333,29 @@
                 row.id || this.ids
                 getItem(id).then(response => {
                     this.form = response.data
+                    this.form.mode = 'edit'
                     this.open = true
                     this.title = '修改道具表'
                     this.isEdit = true
+                })
+            },
+            detail(id) {
+                this.reset()
+                getItem(id).then(response => {
+                    this.form = response.data
+                    this.open = true
+                    this.form.mode = 'view'
+                    this.title = '道具详情'
                 })
             },
             /** 提交按钮 */
             submitForm: function () {
                 this.$refs['form'].validate(valid => {
                     if (valid) {
+                        if (this.form.mode == "view") {
+                            this.open = false
+                            return
+                        }
                         if (this.form.id !== undefined) {
                             updateItem(this.form).then(response => {
                                 if (response.code === 200) {

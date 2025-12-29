@@ -4,11 +4,8 @@ import (
 	"errors"
 
 	"github.com/gin-gonic/gin"
-	log "github.com/go-admin-team/go-admin-core/logger"
 	"github.com/go-admin-team/go-admin-core/sdk/config"
 	"github.com/go-admin-team/go-admin-core/sdk/pkg"
-	"github.com/go-admin-team/go-admin-core/sdk/pkg/jwtauth/user"
-	"github.com/go-admin-team/go-admin-core/sdk/pkg/response"
 	"gorm.io/gorm"
 )
 
@@ -21,24 +18,24 @@ type DataPermission struct {
 
 func PermissionAction() gin.HandlerFunc {
 	return func(c *gin.Context) {
-		db, err := pkg.GetOrm(c)
-		if err != nil {
-			log.Error(err)
-			return
-		}
-
-		msgID := pkg.GenerateMsgIDFromContext(c)
-		var p = new(DataPermission)
-		if userId := user.GetUserIdStr(c); userId != "" {
-			p, err = newDataPermission(db, userId)
-			if err != nil {
-				log.Errorf("MsgID[%s] PermissionAction error: %s", msgID, err)
-				response.Error(c, 500, err, "权限范围鉴定错误")
-				c.Abort()
-				return
-			}
-		}
-		c.Set(PermissionKey, p)
+		//db, err := pkg.GetOrm(c)
+		//if err != nil {
+		//	log.Error(err)
+		//	return
+		//}
+		//
+		//msgID := pkg.GenerateMsgIDFromContext(c)
+		//var p = new(DataPermission)
+		//if userId := user.GetUserIdStr(c); userId != "" {
+		//	p, err = newDataPermission(db, userId)
+		//	if err != nil {
+		//		log.Errorf("MsgID[%s] PermissionAction error: %s", msgID, err)
+		//		response.Error(c, 500, err, "权限范围鉴定错误")
+		//		c.Abort()
+		//		return
+		//	}
+		//}
+		//c.Set(PermissionKey, p)
 		c.Next()
 	}
 }

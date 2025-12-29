@@ -3,6 +3,7 @@ package service
 import (
 	"errors"
 	"fmt"
+	"strings"
 
 	"github.com/go-admin-team/go-admin-core/sdk/service"
 	"github.com/spf13/cast"
@@ -35,6 +36,41 @@ func (e *Item) GetPage(c *dto.ItemGetPageReq, p *actions.DataPermission, list *[
 		return err
 	}
 	return nil
+}
+
+func (e *Item) GetOption() (res []dto.GetOptionResp, err error) {
+	var itemTypes []models.ItemType
+	if err = e.Orm.Model(&models.ItemType{}).Select("id,name").Find(&itemTypes).Error; err != nil {
+		e.Log.Errorf("ItemService itemTypes error:%s \r\n", err)
+		return nil, err
+	}
+
+	for _, item := range itemTypes {
+		res = append(res, dto.GetOptionResp{
+			Value: item.Id,
+			Label: item.Name,
+		})
+	}
+
+	var items []models.Item
+	err = e.Orm.Model(&models.Item{}).Select("id,name,item_id").Find(&items).Error
+	if err != nil {
+		e.Log.Errorf("ItemService GetOption error:%s \r\n", err)
+		return nil, err
+	}
+
+	for k, v := range res {
+		for _, i := range items {
+			if !strings.HasPrefix(cast.ToString(i.ItemId), cast.ToString(v.Value)) {
+				continue
+			}
+			res[k].Children = append(res[k].Children, dto.GetOptionResp{
+				Value: i.ItemId,
+				Label: i.Name,
+			})
+		}
+	}
+	return res, nil
 }
 
 // Get 获取Item对象

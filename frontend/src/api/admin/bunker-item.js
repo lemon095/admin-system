@@ -52,3 +52,10 @@ export function delItem(data) {
     })
 }
 
+// 查询Item选择列表
+export function loadItemOptions() {
+    return request({
+        url: '/api/v1/item/option',
+        method: 'get'
+    })
+}

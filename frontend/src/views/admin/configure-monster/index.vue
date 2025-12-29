@@ -73,6 +73,15 @@
           <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
             <template slot-scope="scope">
               <el-button
+                             slot="reference"
+                             v-permisaction="['admin:configureMonster:edit']"
+                             size="mini"
+                             type="text"
+                             icon="el-icon-view"
+                             @click="detail(scope.row.id)"
+                           >详情
+                           </el-button>
+              <el-button
                 slot="reference"
                 v-permisaction="['admin:configureMonster:edit']"
                 size="mini"
@@ -110,7 +119,7 @@
 
         <!-- 添加或修改对话框 -->
         <el-dialog :title="title" :visible.sync="open" width="500px">
-          <el-form ref="form" :model="form" :rules="rules" label-width="80px">
+          <el-form ref="form" :model="form" :rules="rules" :disabled="form.mode === 'view'" label-width="80px">
 
             <el-form-item label="怪物名称" prop="name">
               <el-input
@@ -204,7 +213,7 @@ export default {
     // 表单重置
     reset() {
       this.form = {
-
+        mode: "view",
         id: undefined,
         name: undefined,
         value: undefined
@@ -236,6 +245,7 @@ export default {
       this.open = true
       this.title = '添加怪物配置'
       this.isEdit = false
+      this.form.mode = "add"
     },
     // 多选框选中数据
     handleSelectionChange(selection) {
@@ -250,9 +260,19 @@ export default {
                 row.id || this.ids
       getConfigureMonster(id).then(response => {
         this.form = response.data
+        this.form.mode = 'edit'
         this.open = true
         this.title = '修改ConfigureMonster'
         this.isEdit = true
+      })
+    },
+    detail(id) {
+      this.reset()
+      getConfigureMonster(id).then(response => {
+          this.form = response.data
+          this.open = true
+          this.form.mode = 'view'
+          this.title = '怪物详情'
       })
     },
     /** 提交按钮 */

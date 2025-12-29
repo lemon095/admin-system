@@ -337,15 +337,16 @@ func (e *SysRole) GetWithName(d *dto.SysRoleByName, model *models.SysRole) *SysR
 // GetById 获取SysRole对象
 func (e *SysRole) GetById(roleId int) ([]string, error) {
 	permissions := make([]string, 0)
-	model := models.SysRole{}
-	model.RoleId = roleId
-	if err := e.Orm.Model(&model).Preload("SysMenu").First(&model).Error; err != nil {
+	var sysMenus []models.SysMenu
+	if err := e.Orm.Table("sys_menu").Select("permission").Joins(`
+		INNER JOIN sys_role_menu 
+		ON sys_role_menu.menu_id = sys_menu.menu_id
+	`).Where("sys_role_menu.role_id = ?", roleId).Find(&sysMenus).Error; err != nil {
 		return nil, err
 	}
-	l := *model.SysMenu
-	for i := 0; i < len(l); i++ {
-		if l[i].Permission != "" {
-			permissions = append(permissions, l[i].Permission)
+	for i := 0; i < len(sysMenus); i++ {
+		if sysMenus[i].Permission != "" {
+			permissions = append(permissions, sysMenus[i].Permission)
 		}
 	}
 	return permissions, nil

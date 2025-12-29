@@ -15,6 +15,12 @@ type ItemGetPageReq struct {
 	ItemOrder
 }
 
+type GetOptionResp struct {
+	Value    int             `json:"value"`
+	Label    string          `json:"label"`
+	Children []GetOptionResp `json:"children"`
+}
+
 type ItemOrder struct {
 	Id        string `form:"idOrder"  search:"type:order;column:id;table:bunker_item"`
 	ItemId    string `form:"itemIdOrder"  search:"type:order;column:item_id;table:bunker_item"`
@@ -59,7 +65,7 @@ func (s *ItemInsertReq) GetId() interface{} {
 
 type ItemUpdateReq struct {
 	Id       int           `uri:"id" comment:""` //
-	ItemId   int64         `json:"itemId" comment:"道具id"`
+	ItemId   int           `json:"itemId" comment:"道具id"`
 	Type     int64         `json:"type" comment:"道具类型"`
 	Name     string        `json:"name" comment:"道具名称"`
 	Desc     string        `json:"desc" comment:"道具描述"`

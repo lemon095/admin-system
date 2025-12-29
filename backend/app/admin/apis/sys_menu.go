@@ -7,6 +7,7 @@ import (
 	"github.com/gin-gonic/gin/binding"
 	"github.com/go-admin-team/go-admin-core/sdk/api"
 	"github.com/go-admin-team/go-admin-core/sdk/pkg/jwtauth/user"
+	"github.com/spf13/cast"
 
 	"go-admin/app/admin/service"
 	"go-admin/app/admin/service/dto"
@@ -193,7 +194,8 @@ func (e SysMenu) GetMenuRole(c *gin.Context) {
 		return
 	}
 
-	result, err := s.SetMenuRole(user.GetRoleName(c))
+	role := user.ExtractClaims(c)
+	result, err := s.SetMenuRole(role["rolekey"].(string), cast.ToInt64(role["roleid"].(float64)))
 
 	if err != nil {
 		e.Error(500, err, "查询失败")

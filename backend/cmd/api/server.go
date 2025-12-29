@@ -35,10 +35,10 @@ var (
 		Example:      "go-admin server -c config/settings.yml",
 		SilenceUsage: true,
 		PreRun: func(cmd *cobra.Command, args []string) {
-			setup()
+			Setup()
 		},
 		RunE: func(cmd *cobra.Command, args []string) error {
-			return run()
+			return Run()
 		},
 	}
 )
@@ -53,7 +53,7 @@ func init() {
 	AppRouters = append(AppRouters, router.InitRouter)
 }
 
-func setup() {
+func Setup() {
 	// 注入配置扩展项
 	//config.ExtendConfig = &ext.ExtConfig
 	////1. 读取配置
@@ -76,7 +76,7 @@ func setup() {
 	log.Info(usageStr)
 }
 
-func run() error {
+func Run() error {
 	if config.ApplicationConfig.Mode == pkg.ModeProd.String() {
 		gin.SetMode(gin.ReleaseMode)
 	}
@@ -99,22 +99,22 @@ func run() error {
 	//
 	//}()
 
-	if apiCheck {
-		var routers = sdk.Runtime.GetRouter()
-		q := sdk.Runtime.GetMemoryQueue("")
-		mp := make(map[string]interface{})
-		mp["List"] = routers
-		message, err := sdk.Runtime.GetStreamMessage("", global.ApiCheck, mp)
-		if err != nil {
-			log.Infof("GetStreamMessage error, %s \n", err.Error())
-			//日志报错错误，不中断请求
-		} else {
-			err = q.Append(message)
-			if err != nil {
-				log.Infof("Append message error, %s \n", err.Error())
-			}
-		}
-	}
+	//if apiCheck {
+	//	var routers = sdk.Runtime.GetRouter()
+	//	q := sdk.Runtime.GetMemoryQueue("")
+	//	mp := make(map[string]interface{})
+	//	mp["List"] = routers
+	//	message, err := sdk.Runtime.GetStreamMessage("", global.ApiCheck, mp)
+	//	if err != nil {
+	//		log.Infof("GetStreamMessage error, %s \n", err.Error())
+	//		//日志报错错误，不中断请求
+	//	} else {
+	//		err = q.Append(message)
+	//		if err != nil {
+	//			log.Infof("Append message error, %s \n", err.Error())
+	//		}
+	//	}
+	//}
 
 	go func() {
 		// 服务连接
