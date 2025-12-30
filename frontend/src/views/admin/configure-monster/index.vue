@@ -118,23 +118,25 @@
         />
 
         <!-- 添加或修改对话框 -->
-        <el-dialog :title="title" :visible.sync="open" width="500px">
+        <el-dialog :title="title" :visible.sync="open" width="800px">
           <el-form ref="form" :model="form" :rules="rules" :disabled="form.mode === 'view'" label-width="80px">
-
             <el-form-item label="怪物名称" prop="name">
               <el-input
                 v-model="form.name"
-                placeholder=""
+                style="width: 30%;"
               />
             </el-form-item>
-            <el-form-item label="怪物属性" prop="value">
-              <el-input
-                v-model="form.value"
-                placeholder="请输入JSON格式"
-                type="textarea"
-                :rows="4"
-              />
+            <h3>怪物属性</h3>
+            <el-form-item v-for="(item, idx) in form.props" :key="idx" label-width="100px">
+              <template #label><span>属性名称：</span></template>
+              <el-input v-model="item.name" placeholder="名称" style="width: 200px; margin-right: 20px;" />
+              <span style="margin-right: 8px;">属性值：</span>
+              <el-input v-model.number="item.value" placeholder="数值" style="width: 200px;" />
+              <el-button type="danger" size="small" @click="removeItem(idx)" v-show="form.props.length > 1 && form.mode !== 'view'">
+                                                删除
+              </el-button>
             </el-form-item>
+            <el-button type="primary" @click="addItem" v-show="form.mode !== 'view'">添加属性</el-button>
           </el-form>
           <div slot="footer" class="dialog-footer">
             <el-button type="primary" @click="submitForm">确 定</el-button>
@@ -218,9 +220,16 @@ export default {
         mode: "view",
         id: undefined,
         name: undefined,
-        value: undefined
+        value: undefined,
+        props: [{name: "", value: 0}],
       }
       this.resetForm('form')
+    },
+    addItem() {
+        this.form.props.push({ name: "", value: 0 })
+    },
+    removeItem(idx) {
+      this.form.props.splice(idx, 1)
     },
     getImgList: function() {
       this.form[this.fileIndex] = this.$refs['fileChoose'].resultList[0].fullUrl
@@ -257,12 +266,22 @@ export default {
     },
     /** 修改按钮操作 */
     handleUpdate(row) {
-      this.reset()
-      const id =
-                row.id || this.ids
+      // this.reset()
+      const id = row.id || this.ids
       getConfigureMonster(id).then(response => {
-        this.form = response.data
-        this.form.mode = 'edit'
+        var data = response.data
+        var props = JSON.parse(data.value)
+
+        this.form = {
+            mode: "edit",
+            id: data.id,
+            name: data.name,
+            props: Object.keys(props).map((key) => ({
+            name: key,
+            value: props[key]
+          }))}
+        this.resetForm('form')
+        
         this.open = true
         this.title = '修改ConfigureMonster'
         this.isEdit = true
@@ -272,6 +291,12 @@ export default {
       this.reset()
       getConfigureMonster(id).then(response => {
           this.form = response.data
+          var props = JSON.parse(this.form.value)
+          this.form.props = Object.keys(props).map((key) => ({
+            name: key,
+            value: props[key]
+          }))
+          
           this.open = true
           this.form.mode = 'view'
           this.title = '怪物详情'
@@ -281,6 +306,16 @@ export default {
     submitForm: function() {
       this.$refs['form'].validate(valid => {
         if (valid) {
+          if (this.form.mode == "view") {
+            this.open = false
+            return
+          }
+
+          var props = Object.fromEntries(
+            this.form.props.map(item => [item.name, item.value])
+          )
+          this.form.value = JSON.stringify(props)
+
           if (this.form.id !== undefined) {
             updateConfigureMonster(this.form).then(response => {
               if (response.code === 200) {

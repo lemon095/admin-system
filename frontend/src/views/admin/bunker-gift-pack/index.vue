@@ -181,7 +181,7 @@
                                         <span style="margin-right: 8px;">单用户兑换次数：</span>
                                         <el-input-number v-model.number="form.giftLimit" :min="1" placeholder="单用户兑换次数" style="width: 200px;"/>
                                     </el-form-item>
-                                    <el-form-item label="兑换码" prop="redeemCode" v-if="form.mode === 'view'">
+                                    <el-form-item label="兑换码" prop="redeemCode" v-show="form.mode === 'view'">
                                         <el-input v-model="form.redeemCode" placeholder="兑换码" style="width: 200px;"/>
                                     </el-form-item>
                                     <h3>礼包配置</h3>
@@ -207,11 +207,11 @@
                                             />
                                             <span style="margin-right: 1px;margin-left: 10px;">数量：</span>
                                             <el-input-number v-model="item.num" :min="1" :max="100" style="width: 100px; margin-right: 10px;"/>
-                                            <el-button type="danger" link @click="removeItem(index)" v-if="form.items.length > 1 && form.mode !== 'view'">
+                                            <el-button type="danger" link @click="removeItem(index)" v-show="form.items.length > 1 && form.mode !== 'view'">
                                                 删除
                                             </el-button>
                                         </el-form-item>
-                                        <el-button type="primary" link @click="addItem" v-if="form.mode !== 'view'">添加道具</el-button>
+                                        <el-button type="primary" link @click="addItem" v-show="form.mode !== 'view'">添加道具</el-button>
                                     </el-form-item>
                     </el-form>
                     <div slot="footer" class="dialog-footer">
