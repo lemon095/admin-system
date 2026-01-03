@@ -132,7 +132,7 @@
               <el-input v-model="item.name" placeholder="名称" style="width: 200px; margin-right: 20px;" />
               <span style="margin-right: 8px;">属性值：</span>
               <el-input v-model.number="item.value" placeholder="数值" style="width: 200px;" />
-              <el-button type="danger" size="small" @click="removeItem(idx)" v-show="form.props.length > 1 && form.mode !== 'view'">
+              <el-button type="danger" size="small" @click="removeItem(idx)" v-show="form.mode !== 'view'">
                                                 删除
               </el-button>
             </el-form-item>
@@ -221,7 +221,7 @@ export default {
         id: undefined,
         name: undefined,
         value: undefined,
-        props: [{name: "", value: 0}],
+        props: [],
       }
       this.resetForm('form')
     },

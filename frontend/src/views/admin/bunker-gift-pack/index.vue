@@ -207,7 +207,7 @@
                                             />
                                             <span style="margin-right: 1px;margin-left: 10px;">数量：</span>
                                             <el-input-number v-model="item.num" :min="1" :max="100" style="width: 100px; margin-right: 10px;"/>
-                                            <el-button type="danger" link @click="removeItem(index)" v-show="form.items.length > 1 && form.mode !== 'view'">
+                                            <el-button type="danger" link @click="removeItem(index)" v-show="form.mode !== 'view'">
                                                 删除
                                             </el-button>
                                         </el-form-item>
@@ -358,7 +358,7 @@
                 silverCoinNum: undefined,
                 startAt: undefined,
                 endAt: undefined,
-                items: [{ value: [], num: 1 }]
+                items: []
             }
                 this.resetForm('form')
             },

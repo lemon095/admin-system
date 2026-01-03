@@ -8,8 +8,7 @@
                                     <el-select
                                         v-model="queryParams.type"
                                         placeholder="请选择道具类型"
-                                        @keyup.enter.native="handleQuery"
-                                        @visible-change="loadItemType">
+                                        @keyup.enter.native="handleQuery">
                                         <el-option
                                             v-for="item in typeOptions"
                                             :key="item.id"
@@ -129,7 +128,7 @@
                 />
 
                 <!-- 添加或修改对话框 -->
-                <el-dialog :title="title" :visible.sync="open" width="500px">
+                <el-dialog :title="title" :visible.sync="open" width="800px">
                     <el-form ref="form" :model="form" :rules="rules" :disabled="form.mode === 'view'" label-width="80px">
                         
                                     <!-- <el-form-item label="道具id" prop="itemId">
@@ -139,8 +138,7 @@
                                     <el-form-item label="道具类型" prop="type">
                                         <el-select
                                         v-model="form.type"
-                                        placeholder="请选择道具类型"
-                                        @visible-change="loadItemType">
+                                        placeholder="请选择道具类型">
                                         <el-option
                                             v-for="item in typeOptions"
                                             :key="item.id"
@@ -161,14 +159,21 @@
                                         <el-input v-model="form.icon" placeholder="图片地址"
                                                       />
                                     </el-form-item>
-                                    <el-form-item label="扩展属性" prop="extend">
-                                        <el-input v-model="form.extend" placeholder="扩展属性" type="textarea" :rows="4"
-                                                      />
-                                    </el-form-item>
                                     <el-form-item label="状态" prop="isEnable">
                                             <el-radio v-model="form.isEnable" :label="1" text-color="#ffffff">启用</el-radio>
                                             <el-radio v-model="form.isEnable" :label="0" text-color="#ffffff">禁用</el-radio>
                                     </el-form-item>
+                                    <h3>物品属性</h3>
+                                    <el-form-item v-for="(item, idx) in form.props" :key="idx" label-width="100px">
+                                    <template #label><span>属性名称：</span></template>
+                                    <el-input v-model="item.name" placeholder="名称" style="width: 200px; margin-right: 20px;" />
+                                    <span style="margin-right: 8px;">属性值：</span>
+                                    <el-input v-model.number="item.value" placeholder="数值" style="width: 200px;" />
+                                    <el-button type="danger" size="small" @click="removeItem(idx)" v-show="form.mode !== 'view'">
+                                                                        删除
+                                    </el-button>
+                                    </el-form-item>
+                                    <el-button type="primary" @click="addItem" v-show="form.mode !== 'view'">添加属性</el-button>
                     </el-form>
                     <div slot="footer" class="dialog-footer">
                         <el-button type="primary" @click="submitForm">确 定</el-button>
@@ -237,6 +242,7 @@
         },
         created() {
             this.getList()
+            this.loadItemType()
             },
         methods: {
             async loadItemType() {
@@ -290,8 +296,15 @@
                 icon: undefined,
                 extend: undefined,
                 isEnable: undefined,
+                props: [],
             }
                 this.resetForm('form')
+            },
+            addItem() {
+                this.form.props.push({ name: "", value: 0 })
+            },
+            removeItem(idx) {
+                this.form.props.splice(idx, 1)
             },
             getImgList: function() {
               this.form[this.fileIndex] = this.$refs['fileChoose'].resultList[0].fullUrl
@@ -329,11 +342,30 @@
             /** 修改按钮操作 */
             handleUpdate(row) {
                 this.reset()
-                const id =
-                row.id || this.ids
+                const id = row.id || this.ids
                 getItem(id).then(response => {
-                    this.form = response.data
-                    this.form.mode = 'edit'
+                    var data = response.data
+                    var props = []
+                    if (data.extend !== null) {
+                        props = JSON.parse(data.extend)
+                    }
+
+                    this.form = {
+                        mode: "edit",
+                        id: data.id,
+                        itemId: data.itemId,
+                        type: data.type,
+                        name: data.name,
+                        desc: data.desc,
+                        icon: data.icon,
+                        isEnable: data.isEnable,
+                        props: Object.keys(props).map((key) => ({
+                            name: key,
+                            value: props[key]
+                        }))
+                    }
+                    this.resetForm('form')
+
                     this.open = true
                     this.title = '修改道具表'
                     this.isEdit = true
@@ -343,6 +375,15 @@
                 this.reset()
                 getItem(id).then(response => {
                     this.form = response.data
+
+                    if (this.form.extend !== null) {
+                        var props = JSON.parse(this.form.extend)
+                        this.form.props = Object.keys(props).map((key) => ({
+                            name: key,
+                            value: props[key]
+                        }))
+                    }
+
                     this.open = true
                     this.form.mode = 'view'
                     this.title = '道具详情'
@@ -356,6 +397,12 @@
                             this.open = false
                             return
                         }
+
+                        var props = Object.fromEntries(
+                            this.form.props.map(item => [item.name, item.value])
+                        )
+                        this.form.extend = JSON.stringify(props)
+
                         if (this.form.id !== undefined) {
                             updateItem(this.form).then(response => {
                                 if (response.code === 200) {
